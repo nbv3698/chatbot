@@ -1,7 +1,34 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-
+<script>
+    $(document).ready(function() {
+			getSMTPSetting();	
+    });
+    
+    function getSMTPSetting(){
+        $.ajax({
+            type: "GET",
+            url: "/smtp/getSMTPJosnString.html",
+            dataType: "json",
+            success : function(response){
+                console.log('get SMTPJosnString success');
+                console.log('host:'+response['host']);
+                console.log('auth:'+response['auth']);
+                console.log('port:'+response['port']);
+                console.log('user:'+response['user']);
+                console.log('pass:'+response['pass']);
+                console.log('protocol:'+response['protocol']);
+                console.log('starttls:'+response['starttls']);
+                console.log('debug:'+response['debug']);
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('get SMTPJosnString fail')
+            }
+        })
+    }
+</script>
 <title><fmt:message key="site.name" /></title>
 <content tag="heading">Member</content>
 
@@ -50,8 +77,9 @@
 	</div>
 </div>
 
-<script>
 
+<script>
+    
 	function send_active_code(id) {
 		
 		// var smtpPort = prompt("Please enter SMTP port:");
@@ -76,6 +104,7 @@
 	   			} else {
 	   	   			alert(data.status);
 	   	   		}
+                location.reload();
 			},
 			error: function(e) {
 				toastr.error("error");

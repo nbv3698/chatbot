@@ -101,6 +101,14 @@
 						<span>Question</span>
 					</a>
 				</li>
+                <security:authorize ifAnyGranted="1">
+					<li>
+						<a href="/smtp/SMTPSetting.html" data-href="smtp" class='dropdown-toggle'>
+							<span>SMTP Setting</span>
+						</a>
+					</li>
+				</security:authorize>
+
 				
 	<!--				<li class="hidden">
 					<a href="#" data-href="thiet-bi" data-toggle="dropdown" class='dropdown-toggle'> 

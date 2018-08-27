@@ -17,8 +17,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import vn.chatbot.controller.SMTPSettingController;
 
 public class EmailUtil {
 
@@ -175,20 +178,40 @@ public class EmailUtil {
 			return null;
 		}
 	}
-	
+	//要擴充	
 	public static String send(String to, String cc, String subject, String text,
 			List<String> filePath) {
+		//read SMTP Setting from file
+		JSONObject SMTPJSONObject = SMTPSettingController.readSMTPSettingFile();
+		if(SMTPJSONObject==null){
+			System.out.println("傳送前讀取檔案失敗");
+		}
+		else{
+			System.out.println("傳送前讀取檔案成功");
+			System.out.println(SMTPJSONObject.get("host"));
+		}
 		
 		Properties properties = new Properties();
+		//設定mail Server
+		properties.put("mail.smtp.host", 				SMTPJSONObject.get("host"));	//yahoo:"smtp.mail.yahoo.com" //outlook:"smtp-mail.outlook.com"
+		properties.put("mail.smtp.port", 				SMTPJSONObject.get("port"));
+		properties.put("mail.smtp.auth", 				SMTPJSONObject.get("auth"));	//需要驗證帳號密碼
+		properties.put("mail.smtp.user", 				SMTPJSONObject.get("user"));	//寄件者信箱
+		properties.put("mail.smtp.pass", 				SMTPJSONObject.get("pass"));	//寄件者密碼？
+		properties.put("mail.transport.protocol", 		SMTPJSONObject.get("protocol"));//傳輸協定為smtp
+		properties.put("mail.smtp.starttls.enable", 	SMTPJSONObject.get("starttls"));//
+		properties.put("mail.debug", 					SMTPJSONObject.get("debug"));	//測試用
+			
+		/*
 		properties.put("mail.smtp.host", 				"smtp.gmail.com");
-		properties.put("mail.smtp.auth", 				"true");
 		properties.put("mail.smtp.port", 				"465");
+		properties.put("mail.smtp.auth", 				"true");
 		properties.put("mail.smtp.user", 				"chatbot.api.active@gmail.com");
 		properties.put("mail.smtp.pass", 				"conga@123");
 		properties.put("mail.transport.protocol", 		"smtps");
 		properties.put("mail.smtp.starttls.enable", 	"true");
 		properties.put("mail.debug", 					"true");
-		
+		*/
 //		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		
 		return send(properties, to, cc, subject, text, filePath);
