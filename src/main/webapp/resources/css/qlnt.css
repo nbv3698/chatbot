@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+.fl {
+	float: left;
+}
+
+.fr {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+.error {
+	color:red;
+}

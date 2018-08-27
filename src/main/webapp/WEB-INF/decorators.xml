@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<decorators defaultdir="/decorators">
+	
+	<decorator name="none" page="layout-none.jsp">
+		<pattern>/login**</pattern>
+		<pattern>/register**</pattern>
+		<pattern>/logout**</pattern>
+		<pattern>/active**</pattern>
+		<pattern>/security.html**</pattern>
+	</decorator>
+	
+	<decorator name="backend" page="layout-backend.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+	
+</decorators>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<classPathEntry location="D:\mysql-connector-java-5.1.9.jar" />
+	
+	<!-- java -jar mybatis-generator-core-1.3.1.jar -configfile generatorConfig.xml -overwrite -tables table_name -->
+
+	<context id="MysqlTables" targetRuntime="MyBatis3">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/chatbot?characterEncoding=UTF-8" userId="root" password="123456">
+		</jdbcConnection>
+		
+		<javaModelGenerator targetPackage="vn.chatbot.domain"
+			targetProject="../../java" />
+
+		<sqlMapGenerator targetPackage="vn.chatbot.dao.xml"
+			targetProject="../../java" />
+		
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="vn.chatbot.dao" targetProject="../../java" />
+    	
+    	<table tableName="member" domainObjectName="Member"
+			enableSelectByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false" enableUpdateByExample="false" >
+			
+			<columnOverride column="user_id" javaType="Integer"  />
+			<columnOverride column="active" javaType="Integer"  />
+			
+			<columnOverride column="name" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="password" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="fullname" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="email" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="active_code" javaType="String" jdbcType="VARCHAR" />
+		</table>
+		
+		<table tableName="customer_log" domainObjectName="CustomerLog"
+			enableSelectByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false" enableUpdateByExample="false">
+			
+			<columnOverride column="id" javaType="Integer"  />
+			
+			<columnOverride column="unikey" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="session_id" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="question" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="organswer" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="answer" javaType="String" jdbcType="VARCHAR" />
+		</table>
+		
+		<table tableName="session_log" domainObjectName="SessionLog"
+			enableSelectByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false" enableUpdateByExample="false">
+			
+			<columnOverride column="id" javaType="Integer"  />
+			<columnOverride column="user_id" javaType="Integer"  />
+			<columnOverride column="session_id" javaType="String" jdbcType="VARCHAR" />
+		</table>
+		
+		<table tableName="qa_pair" domainObjectName="QaPair"
+			enableSelectByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false" enableUpdateByExample="false">
+			
+			<columnOverride column="id" javaType="Integer"  />
+			<columnOverride column="count" javaType="Integer"  />
+			<columnOverride column="question" javaType="String" jdbcType="VARCHAR" />
+		</table>
+		<table tableName="qa_solr" domainObjectName="QaSolr"
+			enableSelectByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false" enableUpdateByExample="false">
+			
+			<columnOverride column="id" javaType="Integer"  />
+			<columnOverride column="answer" javaType="String" jdbcType="VARCHAR" />
+			<columnOverride column="question" javaType="String" jdbcType="VARCHAR" />
+		</table>
+		
+	</context>
+	
+</generatorConfiguration>
