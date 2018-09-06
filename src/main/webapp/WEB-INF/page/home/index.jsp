@@ -111,6 +111,91 @@
 <script>
 
 var answers;
+//記錄使用者輸入的問題
+var userQuestion;
+var answerIDArray = [];
+//初始化所有answerID
+function initailAnswerArray(result){
+				
+	for (var i = 0; i < result.length; i++) {
+		//console.log(result[i].id);
+		//console.log(result[i].question);
+		//console.log(result[i].answer);
+		answerIDArray.push(result[i].id.toString());
+	}
+	console.log("initail answerIDArray:");
+	for(i=0;i<answerIDArray.length;i++){		
+		console.log("answerIDArray["+i+"] = "+answerIDArray[i]+" type:"+typeof(answerIDArray[i]));
+	}
+}
+
+//刪除特定answerID
+function removeAnswerID(answerID){
+	//answerID = parseInt(answerID);
+	//console.log(typeof(answerID));
+	console.log("answerID:"+answerID+" type:"+typeof(answerID));
+	console.log("Before remove:");
+	console.log(answerIDArray);
+	var index = answerIDArray.indexOf(answerID)
+	console.log("index:"+index);
+	if (index > -1) {
+		answerIDArray.splice(index, 1);
+	}
+	console.log("After remove:");
+	console.log(answerIDArray);
+}
+
+//None of the above
+function removeAllAnswer(){
+	console.log("remove All Answer:");
+	console.log(answerIDArray);
+	for(i=0;i<answerIDArray.length;i++){		
+		//console.log("answerIDArray["+i+"] = "+answerIDArray[i]+" type:"+typeof(answerIDArray[i]));
+		$.ajax({
+		url: "/chat/remove.html",
+		data: {id:answerIDArray[i]},
+		method: "post",
+		beforeSend: function(xhr) {
+			//_this.attr("disabled", "disabled");
+		},
+		complete: function() {
+			//_this.prop("disabled", false);
+		},
+		success: function(result) {
+
+		},
+		error: function(e) {
+				//alert("Error in processing");
+			console.log(e);
+		}
+	});
+		
+	}
+	/*
+	$.ajax({
+		url: "/chat/remove.html",
+		data: {id: _this.closest('li').attr("id")},
+		method: "post",
+		beforeSend: function(xhr) {
+			//_this.attr("disabled", "disabled");
+		},
+		complete: function() {
+			//_this.prop("disabled", false);
+		},
+		success: function(result) {
+			removeAnswerID(removeID);
+
+			_this.closest('li').remove();
+		},
+		error: function(e) {
+				//alert("Error in processing");
+			console.log(e);
+		}
+	});
+	
+	*/
+	
+}
 
 $(document).ready(function() {
 	
@@ -135,6 +220,8 @@ $(document).ready(function() {
 			return;
 		}
 		
+		userQuestion = $('#question').val();
+		//右邊的對話紀錄
 		var html='';
 		html += '<li class="left">';
 		html += '	<div class="image">';
@@ -143,7 +230,7 @@ $(document).ready(function() {
 		html += '	<div class="message">';
 		html += '		<span class="caret"></span>';
 		html += '		<span class="name">User</span>';
-		html += '		<p>' + $('#question').val() + '</p>';
+		html += '		<p>' + userQuestion + '</p>';
 		html += '	</div>';
 		html += '</li>';
 		
@@ -151,7 +238,7 @@ $(document).ready(function() {
 		
 		$.ajax({
 			url: "/chat/ask.html",
-			data: {question: $("#question").val()},
+			data: {question: userQuestion},
 			method: "post",
 			beforeSend: function(xhr) {
 				_this.attr("disabled", "disabled");
@@ -160,12 +247,13 @@ $(document).ready(function() {
 				_this.prop("disabled", false);
 			},
 			success: function(result) {
-				
+				$('#question').val("");
 				if (result.length == 0) {
 					//alert("No answer");
 					return;
 				}
 				
+				initailAnswerArray(result);			
 				render(result);
 				answers = result;
 			},
@@ -208,7 +296,7 @@ $(document).ready(function() {
 		//alert($('#modify-id').val());
 		$.ajax({
 			url: "/chat/modify.html",
-			data: {id: $('#modify-id').val(), question: $("#question").val(), orgquestion: $("#modify-org-question").val(),organswer: $("#modify-org-answer").val(), answer: $("#modify-answer").val()},
+			data: {id: $('#modify-id').val(), question: userQuestion, orgquestion: $("#modify-org-question").val(),organswer: $("#modify-org-answer").val(), answer: $("#modify-answer").val()},
 			method: "post",
 			beforeSend: function(xhr) {
 				_this.attr("disabled", "disabled");
@@ -217,7 +305,7 @@ $(document).ready(function() {
 				_this.prop("disabled", false);
 			},
 			success: function(result) {
-				
+				$("#modify-answer").val("");
 				
 			},
 			error: function(e) {
@@ -258,7 +346,9 @@ $(document).ready(function() {
 	.on('click', '.fa-remove', function() {
 		
 		var _this = $(this);
-		
+		var removeID = _this.closest('li').attr("id");
+		//alert(typeof(removeID));
+		//alert(_this.closest('li').attr("id"));
 		$.ajax({
 			url: "/chat/remove.html",
 			data: {id: _this.closest('li').attr("id")},
@@ -270,7 +360,7 @@ $(document).ready(function() {
 				//_this.prop("disabled", false);
 			},
 			success: function(result) {
-				
+				removeAnswerID(removeID);
 				_this.closest('li').remove();
 			},
 			error: function(e) {
@@ -280,7 +370,7 @@ $(document).ready(function() {
 		});
 	})
 	.on('click', '.remove-all', function(e) {
-		
+		removeAllAnswer();
 		e.preventDefault();
 		$("#answers").html("");
 	});

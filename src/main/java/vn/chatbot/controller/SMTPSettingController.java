@@ -55,12 +55,12 @@ public class SMTPSettingController{
 
         try {
         	path = resource.getFile().getPath()+"/static/SMTPsetting.txt";
-        	System.out.println("讀檔路徑："+path);
+        	//System.out.println("讀檔路徑："+path);
         	//Check weather file exist
         	if(new File(path).exists()){   //read file        	
             	reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             	while ((line = reader.readLine()) != null) {
-            		System.out.println("讀檔內容："+line);
+            		//System.out.println("讀檔內容："+line);
             		SMTPJosnString += line;   			
             	}
             	reader.close();
@@ -73,8 +73,8 @@ public class SMTPSettingController{
     					parentFile.mkdirs();
     				}
         			file.createNewFile();
-        			System.out.println("建立新檔:");
-        			System.out.println("新檔路徑:"+path);
+        			//System.out.println("建立新檔:");
+        			//System.out.println("新檔路徑:"+path);
         			
         			//generate Default setting
         			SMTPJSONObject.put("host", "smtp.gmail.com");
@@ -93,12 +93,12 @@ public class SMTPSettingController{
                     bufWriter.close();
         			
         		}catch(IOException e){
-        			System.out.println("建立新檔失敗");
+        			//System.out.println("建立新檔失敗");
         			e.printStackTrace();
         		}
         	}
         }catch (IOException e) {
-        	System.out.println("取得讀檔路徑失敗");
+        	//System.out.println("取得讀檔路徑失敗");
         	e.printStackTrace();
         }finally{
         	if(reader!=null){
@@ -112,8 +112,8 @@ public class SMTPSettingController{
         	}
         }
         
-        System.out.println("檔案內容：");
-		System.out.println(SMTPJosnString);
+        //System.out.println("檔案內容：");
+		//System.out.println(SMTPJosnString);
 		//convert text to JSONObject
 		SMTPJSONObject = new JSONObject(SMTPJosnString);
 		
@@ -152,12 +152,12 @@ public class SMTPSettingController{
 	        SMTPJosnString = SMTPJSONObject.toString();
 			
 	        File file = resource.getFile();
-			System.out.println("儲存檔案路徑："+file.getPath());
+			//System.out.println("儲存檔案路徑："+file.getPath());
 			BufferedWriter bufWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,false),"utf8"));
             bufWriter.write(SMTPJosnString);
             bufWriter.close();
 		} catch (IOException e) {
-			System.out.println("儲存檔案失敗");
+			//System.out.println("儲存檔案失敗");
 			e.printStackTrace();
 		}
     }
