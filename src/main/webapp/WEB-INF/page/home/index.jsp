@@ -55,7 +55,7 @@
 	</div>
 	
 	<div class="col-sm-7 box box-bordered">
-		<div class="box-content" style="border: 1px solid #ddd; height: 500px">
+		<div id="messagesDiv" class="box-content" style="border: 1px solid #ddd; height: 500px">
 			<ul class="messages" id="messages">
 				<li class="left hidden">
 					<div class="image">
@@ -197,6 +197,12 @@ function removeAllAnswer(){
 	
 }
 
+function scrollToBottom(){
+	var mydiv = $("#messagesDiv");
+	mydiv.scrollTop(mydiv.prop("scrollHeight"));
+	
+}
+
 $(document).ready(function() {
 	
 	$("#new-session").click(function(e) {
@@ -235,7 +241,7 @@ $(document).ready(function() {
 		html += '</li>';
 		
 		$("#messages").append(html);
-		
+		scrollToBottom();
 		$.ajax({
 			url: "/chat/ask.html",
 			data: {question: userQuestion},
@@ -289,6 +295,7 @@ $(document).ready(function() {
 		html += '</li>';
 		
 		$("#messages").append(html);
+		scrollToBottom();
 		var idTest = $('#modify-id').val();
 		if(idTest.length==0){
 			$('#modify-id').val(0)
