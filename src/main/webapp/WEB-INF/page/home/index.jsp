@@ -111,12 +111,12 @@
 <script>
 
 var answers;
-//記錄使用者輸入的問題
-var userQuestion;
+
+var userQuestion;	//記錄使用者輸入的問題
 var answerIDArray = [];
 //初始化所有answerID
 function initailAnswerArray(result){
-				
+	answerIDArray = [];			
 	for (var i = 0; i < result.length; i++) {
 		//console.log(result[i].id);
 		//console.log(result[i].question);
@@ -170,37 +170,12 @@ function removeAllAnswer(){
 		}
 	});
 		
-	}
-	/*
-	$.ajax({
-		url: "/chat/remove.html",
-		data: {id: _this.closest('li').attr("id")},
-		method: "post",
-		beforeSend: function(xhr) {
-			//_this.attr("disabled", "disabled");
-		},
-		complete: function() {
-			//_this.prop("disabled", false);
-		},
-		success: function(result) {
-			removeAnswerID(removeID);
-
-			_this.closest('li').remove();
-		},
-		error: function(e) {
-				//alert("Error in processing");
-			console.log(e);
-		}
-	});
-	
-	*/
-	
+	}	
 }
 
 function scrollToBottom(){
 	var mydiv = $("#messagesDiv");
 	mydiv.scrollTop(mydiv.prop("scrollHeight"));
-	
 }
 
 $(document).ready(function() {
@@ -214,7 +189,7 @@ $(document).ready(function() {
 		var first = $("#messages li").first().clone();
 		$("#messages").html(first);
 	});
-	
+	//點擊左邊send按鈕 送出問題
 	$("#ask").click(function(e) {
 		
 		e.preventDefault();
@@ -225,9 +200,11 @@ $(document).ready(function() {
 			alert("Enter content, please!");
 			return;
 		}
-		
+		//清空左邊答案欄
+		$("#answers").html("Processing...");
 		userQuestion = $('#question').val();
-		//右邊的對話紀錄
+		$('#question').val("");
+		//更新右邊的對話紀錄
 		var html='';
 		html += '<li class="left">';
 		html += '	<div class="image">';
@@ -253,7 +230,7 @@ $(document).ready(function() {
 				_this.prop("disabled", false);
 			},
 			success: function(result) {
-				$('#question').val("");
+				
 				if (result.length == 0) {
 					//alert("No answer");
 					return;
@@ -270,7 +247,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+	//點擊右邊send按鈕 送出修改後的答案
 	$("#modify-button").click(function(e) {
 		
 		e.preventDefault();
@@ -281,7 +258,7 @@ $(document).ready(function() {
 			alert("Enter content, please!");
 			return;
 		}
-		
+		//更新右邊的對話紀錄
 		var html='';
 		html += '<li class="right">';
 		html += '	<div class="image">';
@@ -300,7 +277,11 @@ $(document).ready(function() {
 		if(idTest.length==0){
 			$('#modify-id').val(0)
 		}
-		//alert($('#modify-id').val());
+		
+		//移除ID 避免DB中的countdel+1
+		var removeID = $('#modify-id').val();
+		removeAnswerID(removeID);
+
 		$.ajax({
 			url: "/chat/modify.html",
 			data: {id: $('#modify-id').val(), question: userQuestion, orgquestion: $("#modify-org-question").val(),organswer: $("#modify-org-answer").val(), answer: $("#modify-answer").val()},
@@ -321,14 +302,19 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+	//點擊左邊的答案欄的修改按鈕
 	$('#answers').on('click', '.fa-edit', function() {
 		$("#modify-id").val($(this).closest('li').attr("id"));
 		$("#modify-org-question").val($(this).closest('li').find(".result-question").text());
 		$("#modify-org-answer").val($(this).closest('li').find(".result-answer").text());
-		//alert($("#modify-org-answer").val());
 		$("#modify-answer").val($(this).closest('li').find(".result-answer").text());
+		
 		var _this = $(this);
+		/*
+		//移除ID 避免countdel+1
+		var removeID = _this.closest('li').attr("id");
+		removeAnswerID(removeID);
+		*/
 		$.ajax({
 			url: "/chat/updateModifyCount.html",
 			data: {id: _this.closest('li').attr("id")},
@@ -349,12 +335,13 @@ $(document).ready(function() {
 			}
 		});
 		
-	})
+	})//點擊左邊的答案欄的刪除按鈕
 	.on('click', '.fa-remove', function() {
 		
 		var _this = $(this);
+		//移除ID 避免重複刪
 		var removeID = _this.closest('li').attr("id");
-		//alert(typeof(removeID));
+		removeAnswerID(removeID);
 		//alert(_this.closest('li').attr("id"));
 		$.ajax({
 			url: "/chat/remove.html",
@@ -366,8 +353,7 @@ $(document).ready(function() {
 			complete: function() {
 				//_this.prop("disabled", false);
 			},
-			success: function(result) {
-				removeAnswerID(removeID);
+			success: function(result) {				
 				_this.closest('li').remove();
 			},
 			error: function(e) {

@@ -169,9 +169,14 @@ public class ChatController {
 	@RequestMapping(value = "modify")
 	public @ResponseBody int modify(int id, String question,String orgquestion, String organswer, String answer, Model model,
 			HttpServletRequest request) throws SolrServerException, IOException {
-
-		
-		
+		System.out.println("orgquestion:");
+		System.out.println(orgquestion);
+		System.out.println("question:");
+		System.out.println(question);
+		System.out.println("organswer:");
+		System.out.println(organswer);
+		System.out.println("answer:");
+		System.out.println(answer);
 		Message message;
 		if(id > 0) {
 			for (int i = 0; i <= messages.size(); i++) {
@@ -210,6 +215,7 @@ public class ChatController {
 		        System.out.println(updateResponse.getStatus());	
 	        }
 	        else if((organswer!=null && answer!=null &&  orgquestion!=null && question!=null))  {
+	        	//原本的答案跟輸入的答案不一樣 或 原本的問題跟輸入的問題不一樣 就 更新solr
 	        	if (!organswer.trim().equalsIgnoreCase(answer.trim()) || !orgquestion.trim().equalsIgnoreCase(question) )
 	        	{
 		        	doc.addField("chat_q", question);
@@ -226,8 +232,7 @@ public class ChatController {
 	        	doc.addField("chat_q", question);
 		        doc.addField("chat_a", answer);
 		        doc.addField("org_q", question);
-		        doc.addField("org_a", answer);
-		
+		        doc.addField("org_a", answer);		        
 		        server.add(doc);
 		        UpdateResponse updateResponse = server.commit();
 		        System.out.println(updateResponse.getStatus());	
