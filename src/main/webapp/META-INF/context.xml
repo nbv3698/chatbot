@@ -7,7 +7,7 @@
 		auth="Container"
 		type="javax.sql.DataSource"
 		driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/chatbot?characterEncoding=UTF-8"
+		url="jdbc:mysql://localhost:3306/chatbot?serverTimezone=UTC&amp;characterEncoding=UTF-8"
 		removeAbandoned="true"
 		maxActive="75"
 		maxIdle="30"
