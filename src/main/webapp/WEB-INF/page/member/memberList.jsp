@@ -2,8 +2,16 @@
 	pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <script>
+    var memberAmount;
+    var memberIdArray = [];
+    var memberNameArray = [];
+    var memberPasswordArray = [];
+    var memberActiveArray = [];
+    var memberEmailArray = [];
+    
     $(document).ready(function() {
-			getSMTPSetting();	
+        getSMTPSetting();
+        getMemberList();
     });
     
     function getSMTPSetting(){
@@ -13,20 +21,105 @@
             dataType: "json",
             success : function(response){
                 console.log('get SMTPJosnString success');
-                console.log('host:'+response['host']);
-                console.log('auth:'+response['auth']);
-                console.log('port:'+response['port']);
-                console.log('user:'+response['user']);
-                console.log('pass:'+response['pass']);
-                console.log('protocol:'+response['protocol']);
-                console.log('starttls:'+response['starttls']);
-                console.log('debug:'+response['debug']);
+                //console.log('host:'+response['host']);
+                //console.log('auth:'+response['auth']);
+                //console.log('port:'+response['port']);
+                //console.log('user:'+response['user']);
+                //console.log('pass:'+response['pass']);
+                //console.log('protocol:'+response['protocol']);
+                //console.log('starttls:'+response['starttls']);
+                //console.log('debug:'+response['debug']);
             },
 	 
             error : function(xhr, ajaxOptions, thrownError){
                 console.log('get SMTPJosnString fail')
             }
         })
+    }
+    
+    function getMemberList(){
+        $.ajax({
+            type: "GET",
+            url: "/member/getMemberList.html",
+            dataType: "json",
+            success : function(response){
+                console.log('getMemberList success');
+                //console.log(response);
+                memberAmount = response.length;
+                for(var i = 0 ; i < response.length; i++){                   
+                    memberIdArray[i]=response[i]['userId'];
+                    memberNameArray[i]=response[i]['name'];
+                    memberPasswordArray[i]=response[i]['password'];
+                    memberActiveArray[i]=response[i]['active'];
+                    memberEmailArray[i]=response[i]['email'];
+                    //console.log("Id: " + memberIdArray[i]);
+                    //console.log("Name: " + memberNameArray[i]);
+                    //console.log("Password: " + memberPasswordArray[i]);
+                    //console.log("Active: " + memberActiveArray[i]);
+                    //console.log("Email: " + memberEmailArray[i]);
+                }
+                
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('getMemberList fail');
+            }
+        })
+    }
+    
+    function searchMember(){
+        //check input
+        if($('#inputEmail').val().length==0||$('#inputName').val().length==0){
+            alert();
+        }
+        else{
+            //clear table
+            $('#tableDiv').empty();
+            var table="";
+            $('#tableDiv').append("No result.");
+            //console.log($('#inputEmail').val());
+            for(var i = 0; i < memberAmount ; i++){
+                if($('#inputEmail').val() == memberEmailArray[i] && $('#inputName').val() == memberNameArray[i]){
+                    //console.log("Name: " + memberNameArray[i]);
+                    //console.log("Email: " + memberEmailArray[i]);
+                    $('#tableDiv').empty();
+                    table="<table class='table table-hover' id='user'>"+
+                            "<thead>"+
+                                "<tr>"+
+                                    "<th>#</th>"+
+                                    "<th class='sorted order1'>Name</th>"+
+                                    "<th class=''>Fullname</th>"+
+                                    "<th class=''>Email</th>"+
+                                    "<th>Management</th>"+
+                                "</tr>"+
+                            "</thead>"+
+                            "<tbody>"+
+                                "<tr class='odd'>"+
+                                    "<td class='stt'>" + memberIdArray[i] + "</td>"+
+                                    "<td>" + memberNameArray[i] + "</td>"+
+                                    "<td></td>"+
+                                    "<td>" + memberEmailArray[i] + "</td>";
+
+                    if(memberActiveArray[i]==1){   //已驗證
+                        table+= "<td>Active</td>";
+                    }
+                    else{
+                        table+= "<td><a href='#' onclick='javascript:send_active_code("+memberIdArray[i]+");return false;'>Send active code</a></td>";
+                    }
+
+                    table+="</tr>"+
+                            "</tbody>"+
+                        "</table>";
+
+                    $('#tableDiv').append(table);
+                    break;
+                }
+            }
+        }
+        
+        
+        
+       
     }
 </script>
 <title><fmt:message key="site.name" /></title>
@@ -38,23 +131,23 @@
 			Name
 		</label>
 		<div class="col-md-3">
-			<input type="text" class="form-control" name="name" value="${name}">
+			<input id="inputName" type="text" class="form-control" name="name">
 		</div>
 		<label class="col-md-2 control-label">
 			Email
 		</label>
 		<div class="col-md-3">
-			<input type="text" class="form-control" name="email" value="${email}">
+			<input id="inputEmail" type="text" class="form-control" name="email">
 		</div>
 		
 		<div class="col-md-2">
-			<input type="submit" class="btn btn-primary" value="Search">
+			<input class="btn btn-primary" value="Search" onclick='searchMember()'>
 		</div>
 	</div>
 </form>
 
 <div class="box box-color">
-	<div class="box-content nopadding">
+	<div id="tableDiv" class="box-content nopadding">
 		<display:table name="${memberList}" class="table table-hover" export="true" id="user" requestURI="" pagesize="15" defaultsort="2">
 		    <display:column title="#" class="stt" > <c:out value="${user_rowNum}"/> </display:column>
 		    <display:column title="Name" property="name" />

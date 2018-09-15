@@ -11,7 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
 
 import vn.chatbot.domain.Member;
 import vn.chatbot.service.MemberServiceLocal;
@@ -28,7 +32,6 @@ public class AdminMemberController extends BaseController {
 	public String userList(String name, String email, Model model) {
 		
 		List<Member> memberList = memberService.filter(name, email);
-		
 		model.addAttribute("memberList", memberList);
 
 		return "member/memberList";
@@ -54,5 +57,14 @@ public class AdminMemberController extends BaseController {
 		}
 		
 		return data;
+	}
+	
+	@RequestMapping(value = "member/getMemberList", method = RequestMethod.GET)
+	public  @ResponseBody String getMemberList() {
+		List<Member> memberList = memberService.filter("", "");
+		
+		String json = new Gson().toJson(memberList);
+		System.out.print("memberList:\n" + json);
+		return json;
 	}
 }
