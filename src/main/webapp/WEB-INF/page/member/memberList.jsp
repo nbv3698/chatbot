@@ -115,33 +115,29 @@
                     break;
                 }
             }
-        }
-        
-        
-        
-       
+        }   
     }
+    
 </script>
 <title><fmt:message key="site.name" /></title>
 <content tag="heading">Member</content>
 
 <form id="user" action="list.html" method="POST" class="form-horizontal" role="form" >
 	<div class="form-group">
-		<label class="col-md-2 control-label">
+		<label class="col-md-1 control-label">
 			Name
 		</label>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<input id="inputName" type="text" class="form-control" name="name">
 		</div>
-		<label class="col-md-2 control-label">
+		<label class="col-md-1 control-label">
 			Email
 		</label>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<input id="inputEmail" type="text" class="form-control" name="email">
-		</div>
-		
+		</div>	
 		<div class="col-md-2">
-			<input class="btn btn-primary" value="Search" onclick='searchMember()'>
+            <button type="button" class="btn btn-primary" onclick="searchMember()" style="margin-left:1vw;margin-right:1vw;">Search</button>
 		</div>
 	</div>
 </form>
@@ -150,7 +146,7 @@
 	<div id="tableDiv" class="box-content nopadding">
 		<display:table name="${memberList}" class="table table-hover" export="true" id="user" requestURI="" pagesize="15" defaultsort="2">
 		    <display:column title="#" class="stt" > <c:out value="${user_rowNum}"/> </display:column>
-		    <display:column title="Name" property="name" />
+		    <display:column title="Name" property="name" sortable="true"/>
 		    <display:column title="Fullname" property="fullname" sortable="true" sortName="ROLE" />
 		    <display:column title="Email" property="email" sortable="true" sortName="LOCKED" />
 		    <display:column title="Management" media="html" >
