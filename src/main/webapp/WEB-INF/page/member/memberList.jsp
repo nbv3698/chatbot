@@ -118,11 +118,64 @@
         }   
     }
     
+    //convert table to excel
+    function tableToExcel(table, name, filename) {
+        var uri = 'data:application/vnd.ms-excel;base64,';
+        //定義格式及編碼方式
+
+        var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office"'
+                   + '      xmlns:x="urn:schemas-microsoft-com:office:excel"'
+                   + '      xmlns="http://www.w3.org/TR/REC-html40">'
+                   + '<head>'
+                   + '<!--[if gte mso 9]>'
+                   + '<xml>'
+                   + '  <x:ExcelWorkbook>'
+                   + '    <x:ExcelWorksheets>'
+                   + '      <x:ExcelWorksheet>'
+                   + '        <x:Name>{worksheet}</x:Name>'
+                   + '        <x:WorksheetOptions>'
+                   + '          <x:DisplayGridlines/>'
+                   + '        </x:WorksheetOptions>'
+                   + '      </x:ExcelWorksheet>'
+                   + '    </x:ExcelWorksheets>'
+                   + '  </x:ExcelWorkbook>'
+                   + '</xml>'
+                   + '<![endif]-->'
+                   + '</head>'
+                   + '<body>'
+                   + '  <table>{table}</table>'
+                   + '</body>'
+                       + '</html>';
+          //Excel的基本框架
+
+          if (!table.nodeType)
+            table = document.getElementById(table)
+
+          var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+
+          document.getElementById("dlink").href = uri + base64(format(template, ctx));
+          //將超連結指向Excel內容
+          document.getElementById("dlink").download = filename;
+          //定義超連結下載的檔名
+          document.getElementById("dlink").click();
+          //執行點擊超連結的動作來下載檔案
+    }
+    
+    //將文字編譯成Base64格式
+    function base64(s) {
+      return window.btoa(unescape(encodeURIComponent(s)))
+    }
+    
+    //將文字裡的{worksheet}和{table}替換成相對應文字
+    function format(s, c) {
+      return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; })
+    }
+    
 </script>
 <title><fmt:message key="site.name" /></title>
 <content tag="heading">Member</content>
 
-<form id="user" action="list.html" method="POST" class="form-horizontal" role="form" >
+<form id="" action="list.html" method="POST" class="form-horizontal" role="form" >
 	<div class="form-group">
 		<label class="col-md-1 control-label">
 			Name
@@ -144,7 +197,7 @@
 
 <div class="box box-color">
 	<div id="tableDiv" class="box-content nopadding">
-		<display:table name="${memberList}" class="table table-hover" export="true" id="user" requestURI="" pagesize="15" defaultsort="2">
+		<display:table name="${memberList}" class="table table-hover" id="user" requestURI="" pagesize="15" defaultsort="2">
 		    <display:column title="#" class="stt" > <c:out value="${user_rowNum}"/> </display:column>
 		    <display:column title="Name" property="name" sortable="true"/>
 		    <display:column title="Fullname" property="fullname" sortable="true" sortName="ROLE" />
@@ -159,11 +212,21 @@
 		    		</c:otherwise>
 		    	</c:choose>
 		    </display:column>
-		    <display:setProperty name="export.csv.filename" value="${exportFileName}.csv"/>
+            <!--
+            <display:setProperty name="export.csv.filename" value="${exportFileName}.csv"/>
 		    <display:setProperty name="export.excel.filename" value="${exportFileName}.xls"/>
 		    <display:setProperty name="export.xml.filename" value="${exportFileName}.xml"/>
+            -->	    
 		</display:table>
+        <a id="dlink" style="display:none;"></a>
+        <br>
+        Export:
+        <a onclick="tableToExcel('user', 'user', 'user.xls')">Excel</a>
+        <!--
+        <button type="button" class="btn btn-primary" onclick="tableToExcel('user', 'user', 'user.xls')" style="">Export Excel file</button>
+        --> 
 	</div>
+   
 </div>
 
 

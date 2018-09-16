@@ -232,6 +232,7 @@ $(document).ready(function() {
 			success: function(result) {
 				
 				if (result.length == 0) {
+                    $("#answers").html("No answer");
 					//alert("No answer");
 					return;
 				}
