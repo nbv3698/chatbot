@@ -70,7 +70,7 @@
     function searchMember(){
         //check input
         if($('#inputEmail').val().length==0||$('#inputName').val().length==0){
-            alert();
+            alert("Please input E-mail and name.");
         }
         else{
             //clear table
@@ -88,7 +88,7 @@
                                 "<tr>"+
                                     "<th>#</th>"+
                                     "<th class='sorted order1'>Name</th>"+
-                                    "<th class=''>Fullname</th>"+
+                                    //"<th class=''>Fullname</th>"+
                                     "<th class=''>Email</th>"+
                                     "<th>Management</th>"+
                                 "</tr>"+
@@ -97,7 +97,7 @@
                                 "<tr class='odd'>"+
                                     "<td class='stt'>" + memberIdArray[i] + "</td>"+
                                     "<td>" + memberNameArray[i] + "</td>"+
-                                    "<td></td>"+
+                                    //"<td></td>"+
                                     "<td>" + memberEmailArray[i] + "</td>";
 
                     if(memberActiveArray[i]==1){   //已驗證
@@ -200,7 +200,6 @@
 		<display:table name="${memberList}" class="table table-hover" id="user" requestURI="" pagesize="15" defaultsort="2">
 		    <display:column title="#" class="stt" > <c:out value="${user_rowNum}"/> </display:column>
 		    <display:column title="Name" property="name" sortable="true"/>
-		    <display:column title="Fullname" property="fullname" sortable="true" sortName="ROLE" />
 		    <display:column title="Email" property="email" sortable="true" sortName="LOCKED" />
 		    <display:column title="Management" media="html" >
 		    	<c:choose>
