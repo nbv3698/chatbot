@@ -197,7 +197,7 @@ hr {
 				<span>Register</span>
 			</a>
 			<a href="/forgetPassword.html">
-				<span>Forget Password</span>
+				<span>Forgotten your password?</span>
 			</a>
 		</div>
 	</div>

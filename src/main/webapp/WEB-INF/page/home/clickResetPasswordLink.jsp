@@ -1,0 +1,92 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<!-- Apple devices fullscreen -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<!-- Apple devices fullscreen -->
+<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<title><fmt:message key="site.name"/></title>
+<!-- jQuery -->
+<script src="/resources/js/jquery/jquery.min.js" ></script>
+
+<!-- Nice Scroll -->
+<script src="/resources/plugin/jquery/jquery.nicescroll.min.js" ></script>
+<!-- Validation -->
+<script src="/resources/plugin/validation/jquery.validate.min.js" ></script>
+<script src="/resources/plugin/validation/additional-methods.min.js" ></script>
+<!-- icheck -->
+<script src="/resources/plugin/jquery/jquery.icheck.min.js" ></script>
+<!-- Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/resources/js/eakroko.js" ></script>
+
+<script src='https://unpkg.com/nprogress@0.2.0/nprogress.js'></script>
+<link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css'/>
+
+<!-- icheck -->
+<link rel="stylesheet" href="/resources/css/all.css" >
+<!-- Theme CSS -->
+<link rel="stylesheet" href="/resources/css/style.css" >
+<!-- Color CSS -->
+<link rel="stylesheet" href="/resources/css/themes.css" >
+
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!--[if lte IE 9]>
+	<script src="/resources/plugin/jquery/jquery.placeholder.min.js" ></script>
+	<script>
+		$(document).ready(function() {
+			$('input, textarea').placeholder();
+		});
+	</script>
+<![endif]-->
+
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="favicon.ico" />
+<!-- Apple devices Homescreen icon -->
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png" />
+
+<style>
+.login .wrapper .login-body .forget {
+	margin-top: 10px;
+}
+</style>
+
+<content tag="body.class">login</content>
+
+<security:authorize access="isAuthenticated()">
+	<c:redirect url="/security.jsp" />
+</security:authorize>
+<div class="wrapper">
+	<h1>
+		<a href="/">
+			CHATBOT
+		</a>
+	</h1>
+	<div class="login-body">
+		<h2>Forgotten Your Password?</h2>
+		<div class="form-group error text-center" style="color: red">
+			<c:if test="${not empty param.active}">
+				Active failed
+			</c:if>
+		</div>
+		<form id="formDiv" class="form-validate" action="#">
+			We sent a new password to your E-mail.
+		</form>
+        <div class="forget">
+			<a href="/login.html">
+				<span>Login</span>
+			</a>
+		</div>
+		
+	</div>
+</div> 
+
+<script>
+</script> 

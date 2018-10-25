@@ -6,6 +6,8 @@
 		<pattern>/login**</pattern>
 		<pattern>/register**</pattern>
 		<pattern>/forgetPassword**</pattern>
+        <pattern>/resetPassword**</pattern>
+        <pattern>/clickResetPasswordLink**</pattern>
 		<pattern>/setPassword**</pattern>
 		<pattern>/logout**</pattern>
 		<pattern>/active**</pattern>

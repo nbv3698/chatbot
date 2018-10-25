@@ -241,6 +241,9 @@
 							<li>
 								<a href="logout.html">Logout</a>
 							</li>
+                            <li>
+								<a href="accountSetting.html">Account Setting</a>
+							</li>
 						</ul>
 					</div>
 				</div>

@@ -11,7 +11,6 @@
 <title><fmt:message key="site.name"/></title>
 <!-- jQuery -->
 <script src="/resources/js/jquery/jquery.min.js" ></script>
-
 <!-- Nice Scroll -->
 <script src="/resources/plugin/jquery/jquery.nicescroll.min.js" ></script>
 <!-- Validation -->
@@ -20,11 +19,10 @@
 <!-- icheck -->
 <script src="/resources/plugin/jquery/jquery.icheck.min.js" ></script>
 <!-- Bootstrap -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/resources/js/bootstrap/bootstrap.min.js" ></script>
 <script src="/resources/js/eakroko.js" ></script>
 
-<script src='https://unpkg.com/nprogress@0.2.0/nprogress.js'></script>
-<link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css'/>
+
 
 <!-- icheck -->
 <link rel="stylesheet" href="/resources/css/all.css" >
@@ -35,7 +33,8 @@
 
 
 <!-- Bootstrap -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/resources/js/bootstrap/bootstrap.min.css" >
+
 
 <!--[if lte IE 9]>
 	<script src="/resources/plugin/jquery/jquery.placeholder.min.js" ></script>
@@ -70,35 +69,29 @@
 		</a>
 	</h1>
 	<div class="login-body">
-		<h2>Forgotten Your Password?</h2>
+		<h2>Setting Password</h2>
 		<div class="form-group error text-center" style="color: red">
 			<c:if test="${not empty param.active}">
 				Active failed
 			</c:if>
 		</div>
-		<form id="formDiv" class="form-validate" action="#">
+		<div>
 			<div class="form-group">
 				<div class="email controls">
-					<input type="email" class='form-control' id='email' value='' placeholder="Enter email">
+					<input type='text' class='form-control' id='email' value=''>
+					<span class="error"><form:errors path="email"/></span>
 				</div>
 			</div>
-			
-            <div id="messageDiv" class="form-group error text-center" style="color:red; height:1vh">
-				
+			<div class="form-group">
+				<div class="pw controls">
+					<input type='password' class='form-control' id='password' value=''>
+					<span class="error"><form:errors path="password"/></span>
+				</div>
 			</div>
-			
-            
-            
-            
-            <div id="buttonDiv" class="submit form-group">
-                
-				<button id="ConfirmBtn" type='button' class='btn btn-primary' onclick='sendPassword()' style="float:right;">Confirm</button>
+
+			<div class="submit form-group">
+				<button type='button' class='btn btn-primary' onclick = 'setPassword()' style='margin-right:1vw;'>Save</button>
 			</div>
-		</form>
-        <div class="forget">
-			<a href="/login.html">
-				<span>Login</span>
-			</a>
 		</div>
 		<!---
 		<form:form onsubmit="return validate();" action="setPassword.html" method='post' class='form-validate' commandName="member" >
@@ -125,46 +118,28 @@
 </div> 
 
 <script>
-    
-    function sendPassword(){      
-        if($('#email').val() == ""){
-            $("#messageDiv").empty();
-            $("#messageDiv").append("Please input E-mail.");	
-        }
-        else{
-            $("#ConfirmBtn").empty();
-            $("#ConfirmBtn").append("Sending...");
-            document.getElementById("ConfirmBtn").disabled = true; 
-            
-            $.ajax({
-                type: "POST",
-                url: "sendConfirmResetPasswordMail.html",
-                data: {
-                    email: $('#email').val()         
-                },
-                success : function(response){
-                    console.log(response);
-                    $("#messageDiv").empty();
-                   
-                    if(response == "E-mail not existing."){
-                        $("#messageDiv").append(response);
-                        $("#ConfirmBtn").empty();
-                        $("#ConfirmBtn").append("Confirm");
-                        document.getElementById("ConfirmBtn").disabled = false; 
-                    }
-                    else{
-                        console.log('E-mail existing.');
-                        $("#formDiv").empty();
-                        $("#formDiv").append("We sent a mail to check your idetity. Please check email.");
-                        //location.href = 'login.html';
-                    }
-                },	 
-                error : function(xhr, ajaxOptions, thrownError){
-                    $("#messageDiv").empty();
-                    $("#messageDiv").append(response);
-                }
-            }) 
-        }
-        
+
+function setPassword(){
+        //alert($('#email').val());
+		
+        $.ajax({
+            type: "POST",
+            url: "setPassword.html",
+               data: {
+                   email: $('#email').val(),
+                   password: $('#password').val(),
+         
+               },
+               success : function(response){
+                   console.log('setPassword success')
+                    location.href = 'login.html'
+               },	 
+               error : function(xhr, ajaxOptions, thrownError){
+                   console.log('setPassword fail')
+               }
+           })
     }	
+			
+    
+	
 </script> 

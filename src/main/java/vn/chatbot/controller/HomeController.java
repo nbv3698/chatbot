@@ -95,6 +95,59 @@ public class HomeController extends BaseController {
 		return "home/register";
 	}
 	
+	//send Confirm Reset Password Mail
+	 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
+	    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
+	    	Member member = memberService.getMemberByEmail(email);
+	    	String url = "http://localhost:8080/sendPassword.html?email="+email;
+	    	if(member==null){
+	    		System.out.println("E-mail not existing.");
+	    		return "E-mail not existing.";
+	    	}
+	    	else {
+	    		EmailUtil.send(email,
+						null,
+						"[Chatbot]Reset password",
+						"<div>Please click the link to get a new password.<br>" + 
+								"<a href='"+url+"'>Click here</a><br>" +
+						"We will send new password to this E-mail.<br>" +
+						"If you did not reset your password. Please ingnore the mail.</div>",
+						null);
+	    		return "home/login";	    		
+	    	}
+	    }
+	
+	//send new Password
+    @RequestMapping(value = "sendPassword", method = RequestMethod.GET)
+    public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
+    	Member member = memberService.getMemberByEmail(email);
+    	
+    	if(member==null){
+    		System.out.println("E-mail not existing.");
+    		return "E-mail not existing.";
+    	}
+    	else {
+    		System.out.println("get Email:");
+    		System.out.println(email);
+    		String password = String.format("%04d", NumberUtil.random(100, 9999));
+    		member.setEmail(email);
+    		member.setPassword(password);
+    		EmailUtil.send(email,
+    						null,
+    						"[Chatbot]Reset password",
+    						"<div>Your new password: " + password + "<br>Please change your password after you login.</div>",
+    						null);
+    		
+    		PasswordEncoder encoder = new Md5PasswordEncoder();
+    		member.setPassword(encoder.encodePassword(member.getPassword(), null));
+    		memberService.updatePassword(member);
+    		//return "We will send new password to your E-mail.";
+    		return "home/clickResetPasswordLink";
+    	}
+    }
+	
+	
+	
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
 	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
 		
