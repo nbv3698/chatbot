@@ -79,7 +79,68 @@
 			});
 		</script>
 	<![endif]-->
-	
+	<script>
+        /*
+    var memberAmount;
+    var memberIdArray = [];
+    var memberNameArray = [];
+    var memberPasswordArray = [];
+    var memberActiveArray = [];
+    var memberEmailArray = [];
+    
+    $(document).ready(function() {
+        getMemberList();
+    });
+    function getMemberList(){
+        $.ajax({
+            type: "GET",
+            url: "/member/getMemberList.html",
+            dataType: "json",
+            success : function(response){
+                console.log('getMemberList success');
+                //console.log(response);
+                memberAmount = response.length;
+                for(var i = 0 ; i < response.length; i++){                   
+                    memberIdArray[i]=response[i]['userId'];
+                    memberNameArray[i]=response[i]['name'];
+                    memberPasswordArray[i]=response[i]['password'];
+                    memberActiveArray[i]=response[i]['active'];
+                    memberEmailArray[i]=response[i]['email'];
+                    //console.log("Id: " + memberIdArray[i]);
+                    //console.log("Name: " + memberNameArray[i]);
+                    //console.log("Password: " + memberPasswordArray[i]);
+                    //console.log("Active: " + memberActiveArray[i]);
+                    //console.log("Email: " + memberEmailArray[i]);
+                }
+                getMemberActive();
+                
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('getMemberList fail');
+            }
+        })
+    }
+        
+    function getMemberActive(){
+        var email = localStorage.getItem("email");
+        for(var i = 0; i < memberAmount ; i++){
+            if(email == memberEmailArray[i] ){
+                //console.log("Name: " + memberNameArray[i]);
+                //console.log("Email: " + memberEmailArray[i]);
+                localStorage.setItem("active", memberActiveArray[i]);   
+                break;
+            }
+        }
+        
+        if(localStorage.getItem("active")!=1){
+            //alert("not active");
+            window.location.href = 'logout.html';
+        }
+        
+    }
+    */
+    </script>
 </head>
 
 <body >
