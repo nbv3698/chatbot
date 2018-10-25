@@ -86,7 +86,33 @@ public class HomeController extends BaseController {
 
 		return "home/register";
 	}
-
+	
+	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
+	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
+		
+		return "home/forgetPassword";
+	}
+	
+	@RequestMapping(value = "setPassword", method = RequestMethod.POST)
+	public String setPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
+		System.out.println("getUserId()");
+		System.out.println(member.getUserId());
+		System.out.println("getName()");
+		System.out.println(member.getName());
+		System.out.println("getPassword()");
+		System.out.println(member.getPassword());
+		System.out.println("getEmail()");
+		System.out.println(member.getEmail());
+		System.out.println("getActiveCode()");
+		System.out.println(member.getActiveCode());
+		
+		PasswordEncoder encoder = new Md5PasswordEncoder();
+		member.setPassword(encoder.encodePassword(member.getPassword(), null));
+		memberService.updatePassword(member);
+		return "home/login";
+	}
+	
+	
 	@RequestMapping(value = "register", method = RequestMethod.POST)
 	public String registerPost(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
 

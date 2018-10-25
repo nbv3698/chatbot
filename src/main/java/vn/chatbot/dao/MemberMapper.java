@@ -53,6 +53,8 @@ public interface MemberMapper {
      * @mbggenerated Tue May 22 00:33:16 ICT 2018
      */
     int updateByPrimaryKey(Member record);
+    
+    int updatePassword(Member record);
 
 	Member getMemberByName(String username);
 

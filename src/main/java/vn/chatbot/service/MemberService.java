@@ -53,5 +53,11 @@ public class MemberService implements MemberServiceLocal {
 		
 		return memberMapper.filter(parms);
 	}
+	
+	@Override
+	public void updatePassword(Member member) {
+		
+		memberMapper.updatePassword(member);
+	}
 
 }
