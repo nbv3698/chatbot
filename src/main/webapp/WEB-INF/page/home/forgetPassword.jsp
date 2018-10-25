@@ -10,7 +10,7 @@
 
 <title><fmt:message key="site.name"/></title>
 <!-- jQuery -->
-<script src="/resources/js/jquery/jquery.min.js" ></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <!-- Nice Scroll -->
 <script src="/resources/plugin/jquery/jquery.nicescroll.min.js" ></script>
@@ -76,7 +76,25 @@
 				Active failed
 			</c:if>
 		</div>
-			
+		<div>
+			<div class="form-group">
+				<div class="email controls">
+					<input type='text' class='form-control' id='email' value=''>
+					<span class="error"><form:errors path="email"/></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="pw controls">
+					<input type='password' class='form-control' id='password' value=''>
+					<span class="error"><form:errors path="password"/></span>
+				</div>
+			</div>
+
+			<div class="submit form-group">
+				<button type='button' class='btn btn-primary' onclick = 'setPassword()' style='margin-right:1vw;'>Save</button>
+			</div>
+		</div>
+		<!---
 		<form:form onsubmit="return validate();" action="setPassword.html" method='post' class='form-validate' commandName="member" >
 			<div class="form-group">
 				<div class="email controls">
@@ -96,6 +114,33 @@
 			</div>
 			
 		</form:form>
-
+		--->
 	</div>
 </div> 
+
+<script>
+
+function setPassword(){
+        //alert($('#email').val());
+		
+        $.ajax({
+            type: "POST",
+            url: "setPassword.html",
+               data: {
+                   email: $('#email').val(),
+                   password: $('#password').val(),
+         
+               },
+               success : function(response){
+                   console.log('setPassword success')
+                    location.href = 'login.html'
+               },	 
+               error : function(xhr, ajaxOptions, thrownError){
+                   console.log('setPassword fail')
+               }
+           })
+    }	
+			
+    
+	
+</script> 
