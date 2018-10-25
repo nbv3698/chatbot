@@ -18,4 +18,6 @@ public interface MemberServiceLocal {
 
 	List<Member> filter(String name, String email);
 
+	void updatePassword(Member member);
+
 }

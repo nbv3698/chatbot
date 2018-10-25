@@ -196,6 +196,9 @@ hr {
 			<a href="/register.html">
 				<span>Register</span>
 			</a>
+			<a href="/forgetPassword.html">
+				<span>Forget Password</span>
+			</a>
 		</div>
 	</div>
 </div>

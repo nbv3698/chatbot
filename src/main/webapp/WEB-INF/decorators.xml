@@ -5,6 +5,8 @@
 	<decorator name="none" page="layout-none.jsp">
 		<pattern>/login**</pattern>
 		<pattern>/register**</pattern>
+		<pattern>/forgetPassword**</pattern>
+		<pattern>/setPassword**</pattern>
 		<pattern>/logout**</pattern>
 		<pattern>/active**</pattern>
 		<pattern>/security.html**</pattern>
