@@ -108,8 +108,8 @@ public class HomeController extends BaseController {
 	    		EmailUtil.send(email,
 						null,
 						"[Chatbot]Reset password",
-						"<div>Please click the link to get a new password.<br>" + 
-								"<a href='"+url+"'>Click here</a><br>" +
+						"<div>Please click the link to get a new password:<br>" + 
+						"<a href='"+url+"'>Click here</a><br>" +
 						"We will send new password to this E-mail.<br>" +
 						"If you did not reset your password. Please ingnore the mail.</div>",
 						null);
@@ -142,7 +142,7 @@ public class HomeController extends BaseController {
     		member.setPassword(encoder.encodePassword(member.getPassword(), null));
     		memberService.updatePassword(member);
     		//return "We will send new password to your E-mail.";
-    		return "home/clickResetPasswordLink";
+    		return "redirect:/forgetPassword.html?state=sendNewPassword";
     	}
     }
 	

@@ -126,6 +126,43 @@
 
 <script>
     
+    $(document).ready(function() {
+        var url = decodeURI(window.location.href);
+        //console.log("url.split('?')[1] = " + url.split("?")[1]);
+        if( url.split("?")[1] != undefined){
+            var state = url.split("?")[1].split("=")[1];
+            console.log("state = " + state);
+            $("#formDiv").empty();
+            $("#formDiv").append("We sent a new password to your email.<br>Please check email.");
+        }
+        else{
+            getSMTPSetting();	
+        }
+    });
+    
+    function getSMTPSetting(){
+        $.ajax({
+            type: "GET",
+            url: "/smtp/getSMTPJosnString.html",
+            dataType: "json",
+            success : function(response){
+                console.log('get SMTPJosnString success');
+                //console.log('host:'+response['host']);
+                //console.log('auth:'+response['auth']);
+                //console.log('port:'+response['port']);
+                //console.log('user:'+response['user']);
+                //console.log('pass:'+response['pass']);
+                //console.log('protocol:'+response['protocol']);
+                //console.log('starttls:'+response['starttls']);
+                //console.log('debug:'+response['debug']);
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('get SMTPJosnString fail')
+            }
+        })
+    }
+    
     function sendPassword(){      
         if($('#email').val() == ""){
             $("#messageDiv").empty();
@@ -155,7 +192,7 @@
                     else{
                         console.log('E-mail existing.');
                         $("#formDiv").empty();
-                        $("#formDiv").append("We sent a mail to check your idetity. Please check email.");
+                        $("#formDiv").append("We sent a mail to check your identity.<br>Please check email.");
                         //location.href = 'login.html';
                     }
                 },	 
