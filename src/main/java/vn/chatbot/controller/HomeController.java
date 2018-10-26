@@ -1,22 +1,14 @@
 package vn.chatbot.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.http.client.ClientProtocolException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -40,11 +32,6 @@ import vn.chatbot.service.MemberServiceLocal;
 import vn.chatbot.util.EmailUtil;
 import vn.chatbot.util.NumberUtil;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,100 +84,8 @@ public class HomeController extends BaseController {
 		return "home/register";
 	}
 	
-	//send Confirm Reset Password Mail
-	 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
-	    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
-	    	Member member = memberService.getMemberByEmail(email);
-	    	String url = "http://localhost:8080/sendPassword.html?email="+email;
-	    	if(member==null){
-	    		System.out.println("E-mail not existing.");
-	    		return "E-mail not existing.";
-	    	}
-	    	else {
-	    		EmailUtil.send(email,
-						null,
-						"[Chatbot]Reset password",
-						"<div>Please click the link to get a new password:<br>" + 
-						"<a href='"+url+"'>Click here</a><br>" +
-						"We will send new password to this E-mail.<br>" +
-						"If you did not reset your password. Please ingnore the mail.</div>",
-						null);
-	    		return "home/login";	    		
-	    	}
-	    }
 	
-	//send new Password
-    @RequestMapping(value = "sendPassword", method = RequestMethod.GET)
-    public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
-    	Member member = memberService.getMemberByEmail(email);
-    	
-    	if(member==null){
-    		System.out.println("E-mail not existing.");
-    		return "E-mail not existing.";
-    	}
-    	else {
-    		System.out.println("get Email:");
-    		System.out.println(email);
-    		String password = String.format("%04d", NumberUtil.random(100, 9999));
-    		member.setEmail(email);
-    		member.setPassword(password);
-    		EmailUtil.send(email,
-    						null,
-    						"[Chatbot]Reset password",
-    						"<div>Your new password: " + password + "<br>Please change your password after you login.</div>",
-    						null);
-    		
-    		PasswordEncoder encoder = new Md5PasswordEncoder();
-    		member.setPassword(encoder.encodePassword(member.getPassword(), null));
-    		memberService.updatePassword(member);
-    		//return "We will send new password to your E-mail.";
-    		return "redirect:/forgetPassword.html?state=sendNewPassword";
-    	}
-    }
-	
-	
-	//show forget Password page
-	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
-	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
-		return "home/forgetPassword";
-	}
-	
-	//show account setting page
-	@RequestMapping(value = "account/accountSetting", method = RequestMethod.GET)
-	public String accountSetting(Model model, HttpServletRequest request)  {
-		return "account/accountSetting";
-	}
-	
-	//show account setting page
-	@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
-	public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request)  {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Member member = memberService.getMemberByEmail(email);
-						
-		String json = new Gson().toJson(member);
-		System.out.println("Account Setting:\n" + json);
-		return json;
-	}
-	
-	//save the Password
-    @RequestMapping(value = "setPassword", method = RequestMethod.POST)
-    public @ResponseBody String setPassword(@RequestParam("email") String email, @RequestParam("password") String password) {
-    	Member member = memberService.getMemberByEmail(email);
-    	System.out.println("getPassword()");
-		System.out.println(password);
-		System.out.println("getEmail()");
-		System.out.println(email);
-
-		member.setEmail(email);
-		member.setPassword(password);
-		PasswordEncoder encoder = new Md5PasswordEncoder();
-		member.setPassword(encoder.encodePassword(member.getPassword(), null));
-		memberService.updatePassword(member);
-		return "home/login";
-    	
-    }
-	
-	
+    
 	@RequestMapping(value = "register", method = RequestMethod.POST)
 	public String registerPost(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
 
@@ -290,4 +185,102 @@ public class HomeController extends BaseController {
 
     	    	return data;
     	}
+	
+	//Send confirm reset password mail
+		 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
+		    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
+		    	Member member = memberService.getMemberByEmail(email);
+		    	String url = "http://localhost:8080/sendPassword.html?email="+email;
+		    	if(member==null){
+		    		System.out.println("E-mail not existing.");
+		    		return "E-mail not existing.";
+		    	}
+		    	else {
+		    		EmailUtil.send(email,
+							null,
+							"[Chatbot]Reset password",
+							"<div>Please click the link to get a new password:<br>" + 
+							"<a href='"+url+"'>Click here</a><br>" +
+							"We will send new password to this E-mail.<br>" +
+							"If you did not reset your password. Please ingnore the mail.</div>",
+							null);
+		    		return "home/login";	    		
+		    	}
+		    }
+		
+		//send new Password
+	    @RequestMapping(value = "sendPassword", method = RequestMethod.GET)
+	    public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
+	    	Member member = memberService.getMemberByEmail(email);
+	    	
+	    	if(member==null){
+	    		System.out.println("E-mail not existing.");
+	    		return "E-mail not existing.";
+	    	}
+	    	else {
+	    		//System.out.println("get Email:");
+	    		//System.out.println(email);
+	    		String password = String.format("%04d", NumberUtil.random(100, 9999));
+	    		member.setEmail(email);
+	    		member.setPassword(password);
+	    		EmailUtil.send(email,
+	    						null,
+	    						"[Chatbot]Reset password",
+	    						"<div>Your new password: " + password + "<br>Please change your password after you login.</div>",
+	    						null);
+	    		
+	    		PasswordEncoder encoder = new Md5PasswordEncoder();
+	    		member.setPassword(encoder.encodePassword(member.getPassword(), null));
+	    		memberService.updatePassword(member);
+	    		//return "We will send new password to your E-mail.";
+	    		return "redirect:/forgetPassword.html?state=sendNewPassword";
+	    	}
+	    }
+		
+		//Show forget password page
+		@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
+		public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
+			return "home/forgetPassword";
+		}
+		
+		//Show account setting page
+		@RequestMapping(value = "account/accountSetting", method = RequestMethod.GET)
+		public String accountSetting(Model model, HttpServletRequest request)  {
+			return "account/accountSetting";
+		}
+		
+		//Get account setting
+		@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
+		public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request)  {
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Member member = memberService.getMemberByEmail(email);
+							
+			String json = new Gson().toJson(member);
+			//System.out.println("Account Setting:\n" + json);
+			return json;
+		}
+		
+		//Save password
+	    @RequestMapping(value = "account/setPassword", method = RequestMethod.POST)
+	    public @ResponseBody String setPassword(@RequestParam("password") String password) {
+	    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Member member = memberService.getMemberByEmail(email);
+
+			member.setPassword(password);
+			PasswordEncoder encoder = new Md5PasswordEncoder();
+			member.setPassword(encoder.encodePassword(member.getPassword(), null));
+			memberService.updatePassword(member);
+			return "Your password has been changed successfully!";
+	    }
+		
+	    //Save the UserName
+	    @RequestMapping(value = "account/setUserName", method = RequestMethod.POST)
+	    public @ResponseBody String setUserName(@RequestParam("userName") String userName) {
+	    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Member member = memberService.getMemberByEmail(email);
+			member.setName(userName);
+			
+			memberService.updateByPrimaryKeySelective(member);
+			return "Your user name has been changed successfully!";
+	    }
 }

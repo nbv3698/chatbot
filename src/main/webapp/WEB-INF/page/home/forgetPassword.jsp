@@ -81,17 +81,10 @@
 				<div class="email controls">
 					<input type="email" class='form-control' id='email' value='' placeholder="Enter email">
 				</div>
-			</div>
-			
-            <div id="messageDiv" class="form-group error text-center" style="color:red; height:1vh">
-				
-			</div>
-			
-            
-            
-            
-            <div id="buttonDiv" class="submit form-group">
-                
+			</div>			
+            <div id="messageDiv" class="form-group error text-center" style="color:red; height:1vh">				
+			</div>            
+            <div id="buttonDiv" class="submit form-group">              
 				<button id="ConfirmBtn" type='button' class='btn btn-primary' onclick='sendPassword()' style="float:right;">Confirm</button>
 			</div>
 		</form>
@@ -146,14 +139,6 @@
             dataType: "json",
             success : function(response){
                 console.log('get SMTPJosnString success');
-                //console.log('host:'+response['host']);
-                //console.log('auth:'+response['auth']);
-                //console.log('port:'+response['port']);
-                //console.log('user:'+response['user']);
-                //console.log('pass:'+response['pass']);
-                //console.log('protocol:'+response['protocol']);
-                //console.log('starttls:'+response['starttls']);
-                //console.log('debug:'+response['debug']);
             },
 	 
             error : function(xhr, ajaxOptions, thrownError){
@@ -162,7 +147,7 @@
         })
     }
 
-
+    //Send confirm reset password mail
     function sendPassword(){      
         if($('#email').val() == ""){
             $("#messageDiv").empty();
