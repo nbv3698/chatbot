@@ -42,7 +42,14 @@
 		});
 	</script>
 <![endif]-->
-
+<script>
+    /*
+    function storeEmail(){
+        //alert($('#j_username').val());
+        localStorage.setItem("email", $('#j_username').val());
+    }
+    */
+</script>
 <style>
 .gplus {
 
@@ -172,7 +179,7 @@ hr {
 					<input type="checkbox" name="_spring_security_remember_me" class='icheck-me' data-skin="square" data-color="blue" id="remember">
 					<label for="remember">Remember me</label>
 				</div>
-				<input type="submit" value="Sign me in" class='btn btn-primary'>
+				<input type="submit" value="Sign me in" class='btn btn-primary' onclick="storeEmail()">
 			</div>
 			
 			<div class="form-group error text-center" style="color: red">
@@ -190,7 +197,7 @@ hr {
 				<span>Register</span>
 			</a>
 			<a href="/forgetPassword.html">
-				<span>Forget Password</span>
+				<span>Forgotten your password?</span>
 			</a>
 		</div>
 	</div>

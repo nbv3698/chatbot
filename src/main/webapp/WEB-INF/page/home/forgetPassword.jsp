@@ -10,7 +10,7 @@
 
 <title><fmt:message key="site.name"/></title>
 <!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/resources/js/jquery/jquery.min.js" ></script>
 
 <!-- Nice Scroll -->
 <script src="/resources/plugin/jquery/jquery.nicescroll.min.js" ></script>
@@ -20,10 +20,11 @@
 <!-- icheck -->
 <script src="/resources/plugin/jquery/jquery.icheck.min.js" ></script>
 <!-- Bootstrap -->
-<script src="/resources/js/bootstrap/bootstrap.min.js" ></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/resources/js/eakroko.js" ></script>
 
-
+<script src='https://unpkg.com/nprogress@0.2.0/nprogress.js'></script>
+<link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css'/>
 
 <!-- icheck -->
 <link rel="stylesheet" href="/resources/css/all.css" >
@@ -34,8 +35,7 @@
 
 
 <!-- Bootstrap -->
-<link rel="stylesheet" href="/resources/js/bootstrap/bootstrap.min.css" >
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
 <!--[if lte IE 9]>
 	<script src="/resources/plugin/jquery/jquery.placeholder.min.js" ></script>
@@ -70,29 +70,35 @@
 		</a>
 	</h1>
 	<div class="login-body">
-		<h2>Setting Password</h2>
+		<h2>Forgotten Your Password?</h2>
 		<div class="form-group error text-center" style="color: red">
 			<c:if test="${not empty param.active}">
 				Active failed
 			</c:if>
 		</div>
-		<div>
+		<form id="formDiv" class="form-validate" action="#">
 			<div class="form-group">
 				<div class="email controls">
-					<input type='text' class='form-control' id='email' value=''>
-					<span class="error"><form:errors path="email"/></span>
+					<input type="email" class='form-control' id='email' value='' placeholder="Enter email">
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="pw controls">
-					<input type='password' class='form-control' id='password' value=''>
-					<span class="error"><form:errors path="password"/></span>
-				</div>
+			
+            <div id="messageDiv" class="form-group error text-center" style="color:red; height:1vh">
+				
 			</div>
-
-			<div class="submit form-group">
-				<button type='button' class='btn btn-primary' onclick = 'setPassword()' style='margin-right:1vw;'>Save</button>
+			
+            
+            
+            
+            <div id="buttonDiv" class="submit form-group">
+                
+				<button id="ConfirmBtn" type='button' class='btn btn-primary' onclick='sendPassword()' style="float:right;">Confirm</button>
 			</div>
+		</form>
+        <div class="forget">
+			<a href="/login.html">
+				<span>Login</span>
+			</a>
 		</div>
 		<!---
 		<form:form onsubmit="return validate();" action="setPassword.html" method='post' class='form-validate' commandName="member" >
@@ -119,6 +125,7 @@
 </div> 
 
 <script>
+<<<<<<< HEAD
 
 	function setPassword(){
         //alert($('#email').val());
@@ -141,6 +148,85 @@
 		})
     }	
 			
+=======
     
-	
+    $(document).ready(function() {
+        var url = decodeURI(window.location.href);
+        //console.log("url.split('?')[1] = " + url.split("?")[1]);
+        if( url.split("?")[1] != undefined){
+            var state = url.split("?")[1].split("=")[1];
+            console.log("state = " + state);
+            $("#formDiv").empty();
+            $("#formDiv").append("We sent a new password to your email.<br>Please check email.");
+        }
+        else{
+            getSMTPSetting();	
+        }
+    });
+    
+    function getSMTPSetting(){
+        $.ajax({
+            type: "GET",
+            url: "/smtp/getSMTPJosnString.html",
+            dataType: "json",
+            success : function(response){
+                console.log('get SMTPJosnString success');
+                //console.log('host:'+response['host']);
+                //console.log('auth:'+response['auth']);
+                //console.log('port:'+response['port']);
+                //console.log('user:'+response['user']);
+                //console.log('pass:'+response['pass']);
+                //console.log('protocol:'+response['protocol']);
+                //console.log('starttls:'+response['starttls']);
+                //console.log('debug:'+response['debug']);
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('get SMTPJosnString fail')
+            }
+        })
+    }
+>>>>>>> 215865ce215fe5b104df160c821eba34760c9129
+    
+    function sendPassword(){      
+        if($('#email').val() == ""){
+            $("#messageDiv").empty();
+            $("#messageDiv").append("Please input E-mail.");	
+        }
+        else{
+            $("#ConfirmBtn").empty();
+            $("#ConfirmBtn").append("Sending...");
+            document.getElementById("ConfirmBtn").disabled = true; 
+            
+            $.ajax({
+                type: "POST",
+                url: "sendConfirmResetPasswordMail.html",
+                data: {
+                    email: $('#email').val()         
+                },
+                success : function(response){
+                    console.log(response);
+                    $("#messageDiv").empty();
+                   
+                    if(response == "E-mail not existing."){
+                        $("#messageDiv").append(response);
+                        $("#ConfirmBtn").empty();
+                        $("#ConfirmBtn").append("Confirm");
+                        document.getElementById("ConfirmBtn").disabled = false; 
+                    }
+                    else{
+                        console.log('E-mail existing.');
+                        $("#formDiv").empty();
+                        $("#formDiv").append("We sent a mail to check your identity.<br>Please check email.");
+                        //location.href = 'login.html';
+                    }
+                },	 
+                error : function(xhr, ajaxOptions, thrownError){
+                    $("#messageDiv").empty();
+                    $("#messageDiv").append(response);
+                }
+            }) 
+        }
+        
+    }	
 </script> 
