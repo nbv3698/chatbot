@@ -120,25 +120,25 @@
 
 <script>
 
-function setPassword(){
+	function setPassword(){
         //alert($('#email').val());
 		
         $.ajax({
             type: "POST",
             url: "setPassword.html",
-               data: {
-                   email: $('#email').val(),
-                   password: $('#password').val(),
+				data: {
+					email: $('#email').val(),
+					password: $('#password').val(),
          
-               },
-               success : function(response){
-                   console.log('setPassword success')
-                    location.href = 'login.html'
-               },	 
-               error : function(xhr, ajaxOptions, thrownError){
-                   console.log('setPassword fail')
+				},
+				success : function(response){
+					console.log('setPassword success')
+					location.href = 'login.html'
+				},	 
+				error : function(xhr, ajaxOptions, thrownError){
+					console.log('setPassword fail')
                }
-           })
+		})
     }	
 			
     
