@@ -125,31 +125,6 @@
 </div> 
 
 <script>
-<<<<<<< HEAD
-
-	function setPassword(){
-        //alert($('#email').val());
-		
-        $.ajax({
-            type: "POST",
-            url: "setPassword.html",
-				data: {
-					email: $('#email').val(),
-					password: $('#password').val(),
-         
-				},
-				success : function(response){
-					console.log('setPassword success')
-					location.href = 'login.html'
-				},	 
-				error : function(xhr, ajaxOptions, thrownError){
-					console.log('setPassword fail')
-               }
-		})
-    }	
-			
-=======
-    
     $(document).ready(function() {
         var url = decodeURI(window.location.href);
         //console.log("url.split('?')[1] = " + url.split("?")[1]);
@@ -186,8 +161,8 @@
             }
         })
     }
->>>>>>> 215865ce215fe5b104df160c821eba34760c9129
-    
+
+
     function sendPassword(){      
         if($('#email').val() == ""){
             $("#messageDiv").empty();

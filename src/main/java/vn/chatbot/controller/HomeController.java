@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+
 import vn.chatbot.domain.GooglePojo;
 import vn.chatbot.domain.Member;
 import vn.chatbot.service.GoogleAuthServiceLocal;
@@ -147,29 +149,28 @@ public class HomeController extends BaseController {
     }
 	
 	
-	
+	//show forget Password page
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
-	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
-		
+	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
 		return "home/forgetPassword";
 	}
-	/*
-	@RequestMapping(value = "setPassword", method = RequestMethod.POST)
-	public String setPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
-		
-		System.out.println("getPassword()");
-		System.out.println(member.getPassword());
-		System.out.println("getEmail()");
-		System.out.println(member.getEmail());
-
-		
-		PasswordEncoder encoder = new Md5PasswordEncoder();
-		member.setPassword(encoder.encodePassword(member.getPassword(), null));
-		memberService.updatePassword(member);
-		return "home/login";
+	
+	//show account setting page
+	@RequestMapping(value = "account/accountSetting", method = RequestMethod.GET)
+	public String accountSetting(Model model, HttpServletRequest request)  {
+		return "account/accountSetting";
 	}
 	
-	*/
+	//show account setting page
+	@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
+	public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request)  {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberService.getMemberByEmail(email);
+						
+		String json = new Gson().toJson(member);
+		System.out.println("Account Setting:\n" + json);
+		return json;
+	}
 	
 	//save the Password
     @RequestMapping(value = "setPassword", method = RequestMethod.POST)

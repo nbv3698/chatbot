@@ -169,7 +169,11 @@
 						</a>
 					</li>
 				</security:authorize>
-
+				<li>
+					<a href="/account/accountSetting.html" data-href="account" class='dropdown-toggle'>
+						<span>Account Setting</span>
+					</a>
+				</li>
 				
 	<!--				<li class="hidden">
 					<a href="#" data-href="thiet-bi" data-toggle="dropdown" class='dropdown-toggle'> 
@@ -238,12 +242,15 @@
 							<li class="hidden">
 								<a href="/user/change-password.html">Change password</a>
 							</li>
+							<!--
+							<li>
+								<a href="accountSetting.html">Account Setting</a>
+							</li>
+							-->
 							<li>
 								<a href="logout.html">Logout</a>
 							</li>
-                            <li>
-								<a href="accountSetting.html">Account Setting</a>
-							</li>
+                           
 						</ul>
 					</div>
 				</div>

@@ -49,6 +49,32 @@
         localStorage.setItem("email", $('#j_username').val());
     }
     */
+	$(document).ready(function() {
+        getSMTPSetting();	
+    });
+    
+    function getSMTPSetting(){
+        $.ajax({
+            type: "GET",
+            url: "/smtp/getSMTPJosnString.html",
+            dataType: "json",
+            success : function(response){
+                console.log('get SMTPJosnString success');
+                //console.log('host:'+response['host']);
+                //console.log('auth:'+response['auth']);
+                //console.log('port:'+response['port']);
+                //console.log('user:'+response['user']);
+                //console.log('pass:'+response['pass']);
+                //console.log('protocol:'+response['protocol']);
+                //console.log('starttls:'+response['starttls']);
+                //console.log('debug:'+response['debug']);
+            },
+	 
+            error : function(xhr, ajaxOptions, thrownError){
+                console.log('get SMTPJosnString fail')
+            }
+        })
+    }
 </script>
 <style>
 .gplus {
