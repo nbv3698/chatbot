@@ -1,6 +1,7 @@
 package vn.chatbot.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -190,7 +191,8 @@ public class HomeController extends BaseController {
 		 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
 		    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
 		    	Member member = memberService.getMemberByEmail(email);
-		    	String url = "http://localhost:8080/sendPassword.html?email="+email;
+		    	String url = "http://http://122.146.88.206:8080/sendPassword.html?email="+email;
+		    	//String url = "http://localhost:8080/sendPassword.html?email="+email;
 		    	if(member==null){
 		    		System.out.println("E-mail not existing.");
 		    		return "E-mail not existing.";
@@ -251,12 +253,15 @@ public class HomeController extends BaseController {
 		
 		//Get account setting
 		@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
-		public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request)  {
+		public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request,HttpServletResponse response)  {
+			
+
 			String email = SecurityContextHolder.getContext().getAuthentication().getName();
 			Member member = memberService.getMemberByEmail(email);
 							
 			String json = new Gson().toJson(member);
-			//System.out.println("Account Setting:\n" + json);
+			
+			System.out.println("Account:\n" + json);
 			return json;
 		}
 		
@@ -275,7 +280,13 @@ public class HomeController extends BaseController {
 		
 	    //Save the UserName
 	    @RequestMapping(value = "account/setUserName", method = RequestMethod.POST)
-	    public @ResponseBody String setUserName(@RequestParam("userName") String userName) {
+	    public @ResponseBody String setUserName(@RequestParam("userName") String userName, HttpServletRequest request) {
+	    	try {
+				request.setCharacterEncoding("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
 			Member member = memberService.getMemberByEmail(email);
 			member.setName(userName);
