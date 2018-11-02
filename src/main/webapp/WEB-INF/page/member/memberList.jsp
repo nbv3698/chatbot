@@ -12,8 +12,8 @@
     $(document).ready(function() {
         getSMTPSetting();
         getMemberList();
-    });
-    
+	});
+    	
     function getSMTPSetting(){
         $.ajax({
             type: "GET",
@@ -21,14 +21,6 @@
             dataType: "json",
             success : function(response){
                 console.log('get SMTPJosnString success');
-                //console.log('host:'+response['host']);
-                //console.log('auth:'+response['auth']);
-                //console.log('port:'+response['port']);
-                //console.log('user:'+response['user']);
-                //console.log('pass:'+response['pass']);
-                //console.log('protocol:'+response['protocol']);
-                //console.log('starttls:'+response['starttls']);
-                //console.log('debug:'+response['debug']);
             },
 	 
             error : function(xhr, ajaxOptions, thrownError){
@@ -58,7 +50,7 @@
                     //console.log("Active: " + memberActiveArray[i]);
                     //console.log("Email: " + memberEmailArray[i]);
                 }
-                
+                displayUserName();
             },
 	 
             error : function(xhr, ajaxOptions, thrownError){
@@ -171,6 +163,48 @@
       return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; })
     }
     
+	
+	//解決中文顯示亂碼的問題
+	function displayUserName(){
+		for(var i = 0 ; i < memberAmount; i++){ 
+			reconvertName = reconvert(memberNameArray[i]);
+			$("#tableDiv td:contains('" + memberNameArray[i] + "')").html(reconvertName);
+			//console.log(memberNameArray[i]);
+			//console.log(reconvertName);
+		}
+	}
+	
+	function left_zero_4(str) {
+        if (str != null && str != '' && str != 'undefined') {
+			if (str.length == 2) {
+				return '00' + str;
+			}
+		}
+		return str;
+	}
+	//中文轉Unicode
+    function convertChiToUnicode(str){
+        var value='';
+        for (var i = 0; i < str.length; i++) {
+            value += '\\u' + left_zero_4(parseInt(str.charCodeAt(i)).toString(16));
+        }
+        return value;
+    }	
+	//Unicode轉中文
+	function reconvert(str){ 
+		str = str.replace(/(\\u)(\w{1,4})/gi,function($0){ 
+			return (String.fromCharCode(parseInt((escape($0).replace(/(%5Cu)(\w{1,4})/g,"$2")),16))); 
+		}); 
+		str = str.replace(/(&#x)(\w{1,4});/gi,function($0){ 
+			return String.fromCharCode(parseInt(escape($0).replace(/(%26%23x)(\w{1,4})(%3B)/g,"$2"),16)); 
+		}); 
+		str = str.replace(/(&#)(\d{1,6});/gi,function($0){ 
+			return String.fromCharCode(parseInt(escape($0).replace(/(%26%23)(\d{1,6})(%3B)/g,"$2"))); 
+		});               
+		return str; 
+    }
+	
+	
 </script>
 <title><fmt:message key="site.name" /></title>
 <content tag="heading">Member</content>
@@ -199,7 +233,7 @@
 	<div id="tableDiv" class="box-content nopadding">
 		<display:table name="${memberList}" class="table table-hover" id="user" requestURI="" pagesize="15" defaultsort="2">
 		    <display:column title="#" class="stt" > <c:out value="${user_rowNum}"/> </display:column>
-		    <display:column title="Name" property="name" sortable="true"/>
+		    <display:column title="Name" property="name" sortable="true" />
 		    <display:column title="Email" property="email" sortable="true" sortName="LOCKED" />
 		    <display:column title="Management" media="html" >
 		    	<c:choose>

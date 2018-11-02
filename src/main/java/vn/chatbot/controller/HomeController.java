@@ -191,7 +191,7 @@ public class HomeController extends BaseController {
 		 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
 		    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
 		    	Member member = memberService.getMemberByEmail(email);
-		    	String url = "http://http://122.146.88.206:8080/sendPassword.html?email="+email;
+		    	String url = "http://122.146.88.206:8080/sendPassword.html?email="+email;
 		    	//String url = "http://localhost:8080/sendPassword.html?email="+email;
 		    	if(member==null){
 		    		System.out.println("E-mail not existing.");

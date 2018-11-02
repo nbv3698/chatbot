@@ -53,27 +53,29 @@
 		$('#email').empty();
 		$('#email').append(response['email']);
 		
-		$('#userName').val(response['name']);
+		$('#userName').val(reconvert(response['name']));
 	}
 	
     function changeName(){
         isSave = true;
-        //console.log($('#userName').val());
-        
-        if($('#userName').val().length == 0){
+		userName = $('#userName').val();
+		
+        //console.log(userName);
+        //alert(reconvert(userName));
+        if(userName.length == 0){
             alert('Please input user name.');
         }
-        else if($('#userName').val().length > 100){
-            alert('The length of user name should less than 100.');
+        else if(convertChiToUnicode(userName).length > 100){
+            alert('The length of user name should less than 20.');
         }
         else{
-            
+            userName = convertChiToUnicode(userName);
             $.ajax({
                 type: "POST",
                 url: "setUserName.html",
                 dataType: "text",
                 data: {
-                    userName: $('#userName').val()
+                    userName: userName
                 },
                 success : function(response){
                     console.log(response);
@@ -122,8 +124,41 @@
             })
         }
     }
+	
+	//解決中文顯示亂碼的問題
+	function left_zero_4(str) {
+        if (str != null && str != '' && str != 'undefined') {
+			if (str.length == 2) {
+				return '00' + str;
+			}
+		}
+		return str;
+	}
+	//中文轉Unicode
+    function convertChiToUnicode(str){
+        var value='';
+        for (var i = 0; i < str.length; i++) {
+            value += '\\u' + left_zero_4(parseInt(str.charCodeAt(i)).toString(16));
+        }
+        return value;
+    }	
+	//Unicode轉中文
+	function reconvert(str){ 
+		str = str.replace(/(\\u)(\w{1,4})/gi,function($0){ 
+			return (String.fromCharCode(parseInt((escape($0).replace(/(%5Cu)(\w{1,4})/g,"$2")),16))); 
+		}); 
+		str = str.replace(/(&#x)(\w{1,4});/gi,function($0){ 
+			return String.fromCharCode(parseInt(escape($0).replace(/(%26%23x)(\w{1,4})(%3B)/g,"$2"),16)); 
+		}); 
+		str = str.replace(/(&#)(\d{1,6});/gi,function($0){ 
+			return String.fromCharCode(parseInt(escape($0).replace(/(%26%23)(\d{1,6})(%3B)/g,"$2"))); 
+		});               
+		return str; 
+    }
 </script>    
+<script type="text/javascript">	
     
+</script>    
 
 <div id="settingDiv">
 <!--

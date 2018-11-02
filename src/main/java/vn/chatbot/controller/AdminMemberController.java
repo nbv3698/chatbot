@@ -33,7 +33,6 @@ public class AdminMemberController extends BaseController {
 		
 		List<Member> memberList = memberService.filter(name, email);
 		model.addAttribute("memberList", memberList);
-
 		return "member/memberList";
 	}
 	
@@ -64,7 +63,7 @@ public class AdminMemberController extends BaseController {
 		List<Member> memberList = memberService.filter("", "");
 		
 		String json = new Gson().toJson(memberList);
-		System.out.print("memberList:\n" + json);
+		//System.out.print("memberList:\n" + json);
 		return json;
 	}
 }
