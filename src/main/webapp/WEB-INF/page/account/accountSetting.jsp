@@ -49,7 +49,7 @@
 	
 	function showAccountSetting(response){
 		//console.log('email:'+response['email']);
-        //console.log('name:'+response['name']);
+        console.log('name:'+response['name']);
 		$('#email').empty();
 		$('#email').append(response['email']);
 		

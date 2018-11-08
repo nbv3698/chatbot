@@ -84,8 +84,6 @@ public class HomeController extends BaseController {
 
 		return "home/register";
 	}
-	
-	
     
 	@RequestMapping(value = "register", method = RequestMethod.POST)
 	public String registerPost(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {
@@ -188,17 +186,17 @@ public class HomeController extends BaseController {
     	}
 	
 	//Send confirm reset password mail
-		 @RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
-		    public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
-		    	Member member = memberService.getMemberByEmail(email);
-		    	String url = "http://122.146.88.206:8080/sendPassword.html?email="+email;
-		    	//String url = "http://localhost:8080/sendPassword.html?email="+email;
-		    	if(member==null){
-		    		System.out.println("E-mail not existing.");
-		    		return "E-mail not existing.";
-		    	}
-		    	else {
-		    		EmailUtil.send(email,
+	@RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
+	public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
+		Member member = memberService.getMemberByEmail(email);
+		String url = "http://122.146.88.206:8080/sendPassword.html?email="+email;
+		//String url = "http://localhost:8080/sendPassword.html?email="+email;
+		if(member==null){
+			System.out.println("E-mail not existing.");
+			return "E-mail not existing.";
+		}
+		else {
+			EmailUtil.send(email,
 							null,
 							"[Chatbot]Reset password",
 							"<div>Please click the link to get a new password:<br>" + 
@@ -206,92 +204,91 @@ public class HomeController extends BaseController {
 							"We will send new password to this E-mail.<br>" +
 							"If you did not reset your password. Please ingnore the mail.</div>",
 							null);
-		    		return "home/login";	    		
-		    	}
-		    }
+			return "home/login";	    		
+		}
+	}
 		
-		//send new Password
-	    @RequestMapping(value = "sendPassword", method = RequestMethod.GET)
-	    public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
-	    	Member member = memberService.getMemberByEmail(email);
+	//send new Password
+	@RequestMapping(value = "sendPassword", method = RequestMethod.GET)
+	public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
+		Member member = memberService.getMemberByEmail(email);
 	    	
-	    	if(member==null){
-	    		System.out.println("E-mail not existing.");
-	    		return "E-mail not existing.";
-	    	}
-	    	else {
+		if(member==null){
+			System.out.println("E-mail not existing.");
+			return "E-mail not existing.";
+		}
+		else {
 	    		//System.out.println("get Email:");
 	    		//System.out.println(email);
-	    		String password = String.format("%04d", NumberUtil.random(100, 9999));
-	    		member.setEmail(email);
-	    		member.setPassword(password);
-	    		EmailUtil.send(email,
-	    						null,
-	    						"[Chatbot]Reset password",
-	    						"<div>Your new password: " + password + "<br>Please change your password after you login.</div>",
-	    						null);
-	    		
-	    		PasswordEncoder encoder = new Md5PasswordEncoder();
-	    		member.setPassword(encoder.encodePassword(member.getPassword(), null));
-	    		memberService.updatePassword(member);
-	    		//return "We will send new password to your E-mail.";
-	    		return "redirect:/forgetPassword.html?state=sendNewPassword";
-	    	}
-	    }
-		
-		//Show forget password page
-		@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
-		public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
-			return "home/forgetPassword";
-		}
-		
-		//Show account setting page
-		@RequestMapping(value = "account/accountSetting", method = RequestMethod.GET)
-		public String accountSetting(Model model, HttpServletRequest request)  {
-			return "account/accountSetting";
-		}
-		
-		//Get account setting
-		@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
-		public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request,HttpServletResponse response)  {
-			
-
-			String email = SecurityContextHolder.getContext().getAuthentication().getName();
-			Member member = memberService.getMemberByEmail(email);
-							
-			String json = new Gson().toJson(member);
-			
-			System.out.println("Account:\n" + json);
-			return json;
-		}
-		
-		//Save password
-	    @RequestMapping(value = "account/setPassword", method = RequestMethod.POST)
-	    public @ResponseBody String setPassword(@RequestParam("password") String password) {
-	    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
-			Member member = memberService.getMemberByEmail(email);
-
+			String password = String.format("%04d", NumberUtil.random(100, 9999));
+			member.setEmail(email);
 			member.setPassword(password);
+			EmailUtil.send(email,
+	    					null,
+	    					"[Chatbot]Reset password",
+	    					"<div>Your new password: " + password + "<br>Please change your password after you login.</div>",
+	    					null);
+	    		
 			PasswordEncoder encoder = new Md5PasswordEncoder();
 			member.setPassword(encoder.encodePassword(member.getPassword(), null));
 			memberService.updatePassword(member);
-			return "Your password has been changed successfully!";
-	    }
+	    		//return "We will send new password to your E-mail.";
+			return "redirect:/forgetPassword.html?state=sendNewPassword";
+		}
+	}
 		
-	    //Save the UserName
-	    @RequestMapping(value = "account/setUserName", method = RequestMethod.POST)
-	    public @ResponseBody String setUserName(@RequestParam("userName") String userName, HttpServletRequest request) {
-	    	try {
-				request.setCharacterEncoding("UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
-			Member member = memberService.getMemberByEmail(email);
-			member.setName(userName);
+	//Show forget password page
+	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
+	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
+		return "home/forgetPassword";
+	}
+		
+	//Show account setting page
+	@RequestMapping(value = "account/accountSetting", method = RequestMethod.GET)
+	public String accountSetting(Model model, HttpServletRequest request)  {
+		return "account/accountSetting";
+	}
+	
+	//Get account setting
+	@RequestMapping(value = "account/getAccountSetting", method = RequestMethod.GET)
+	public @ResponseBody String getAccountSetting(Model model, HttpServletRequest request, HttpServletResponse response)  {
+		response.setCharacterEncoding("UTF-8");
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberService.getMemberByEmail(email);
+							
+		String json = new Gson().toJson(member);
 			
-			memberService.updateByPrimaryKeySelective(member);
-			return "Your user name has been changed successfully!";
-	    }
+		System.out.println("Account:\n" + json);
+		return json;
+	}
+		
+	//Save password
+	@RequestMapping(value = "account/setPassword", method = RequestMethod.POST)
+	public @ResponseBody String setPassword(@RequestParam("password") String password) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberService.getMemberByEmail(email);
+
+		member.setPassword(password);
+		PasswordEncoder encoder = new Md5PasswordEncoder();
+		member.setPassword(encoder.encodePassword(member.getPassword(), null));
+		memberService.updatePassword(member);
+		return "Your password has been changed successfully!";
+	}
+		
+	//Save the UserName
+	@RequestMapping(value = "account/setUserName", method = RequestMethod.POST)
+	public @ResponseBody String setUserName(@RequestParam("userName") String userName, HttpServletRequest request) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberService.getMemberByEmail(email);
+		member.setName(userName);
+			
+		memberService.updateByPrimaryKeySelective(member);
+		return "Your user name has been changed successfully!";
+	}
 }
