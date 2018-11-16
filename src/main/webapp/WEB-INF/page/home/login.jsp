@@ -205,7 +205,7 @@ hr {
 					<input type="checkbox" name="_spring_security_remember_me" class='icheck-me' data-skin="square" data-color="blue" id="remember">
 					<label for="remember">Remember me</label>
 				</div>
-				<input type="submit" value="Sign me in" class='btn btn-primary' onclick="storeEmail()">
+				<input type="submit" value="Sign me in" class='btn btn-primary'>
 			</div>
 			
 			<div class="form-group error text-center" style="color: red">

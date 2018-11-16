@@ -3,6 +3,7 @@ package vn.chatbot.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -10,12 +11,16 @@ import javax.validation.Valid;
 import org.apache.http.client.ClientProtocolException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 
@@ -291,4 +298,30 @@ public class HomeController extends BaseController {
 		memberService.updateByPrimaryKeySelective(member);
 		return "Your user name has been changed successfully!";
 	}
+	@Resource(name = "authenticationManager")
+    private AuthenticationManager authenticationManager;
+	//auto login
+	@RequestMapping(value = "autoLogin", method = RequestMethod.GET)
+	public @ResponseBody String autoLogin(@RequestParam("email") String email) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+		
+        String defaultTargetUrl = "/"; // 默认登陆成功的页面
+        String redirectUrl = "/account/accountSetting"; // 默认为登陆错误页面
+        
+        
+        Member member = memberService.getMemberByEmail(email);
+		Authentication auth = new UsernamePasswordAuthenticationToken(email, member.getPassword());
+		auth = authenticationManager.authenticate(auth);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		
+		System.out.println("SecurityContextHolder:\n"+SecurityContextHolder.getContext().getAuthentication().getName());
+		
+		SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        redirectUrl = (savedRequest != null) ? savedRequest.getRedirectUrl() : defaultTargetUrl;
+        return redirectUrl;
+	}
+	
+	
+	
 }
