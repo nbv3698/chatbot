@@ -2,6 +2,9 @@ package vn.chatbot.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 
@@ -40,6 +39,9 @@ import vn.chatbot.service.MemberServiceLocal;
 import vn.chatbot.util.EmailUtil;
 import vn.chatbot.util.NumberUtil;
 
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -196,25 +198,46 @@ public class HomeController extends BaseController {
 	@RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
 	public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
 		Member member = memberService.getMemberByEmail(email);
-		String url = "http://122.146.88.206:8080/sendPassword.html?email="+email;
-		//String url = "http://localhost:8080/sendPassword.html?email="+email;
+
 		if(member==null){
 			System.out.println("E-mail not existing.");
 			return "E-mail not existing.";
 		}
 		else {
-			EmailUtil.send(email,
-							null,
-							"[Chatbot]Reset password",
-							"<div>Please click the link to get a new password:<br>" + 
-							"<a href='"+url+"'>Click here</a><br>" +
-							"We will send new password to this E-mail.<br>" +
-							"If you did not reset your password. Please ingnore the mail.</div>",
-							null);
+			// get current time
+			DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+			Calendar cal = Calendar.getInstance();
+			
+			final String time = dateFormat.format(cal.getTime());
+			byte[] textByte = null;
+			try {
+				textByte = time.getBytes("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			if(textByte!=null) {
+				// encode time string
+				final Base64.Encoder encoder = Base64.getEncoder();
+				final String encodedText = encoder.encodeToString(textByte);
+
+				String url = "http://localhost:8080/autoLogin?email=" + email +"&key=" + encodedText;
+				//String url = "http://122.146.88.206:8080/autoLogin?email=" + email +"&key=" + encodedText;
+				EmailUtil.send(email,
+						null,
+						"[Chatbot]Reset password",
+						//"<div>Please click the link to get a new password:<br>" + 
+						"<div>Please click the link to set your password in one hour:<br>" + 
+						"<a href='"+url+"'>Click here</a><br>" +
+						//"We will send new password to this E-mail.<br>" +
+						"If you did not reset your password. Please ingnore this mail.</div>",
+						null);
+			}
+			
 			return "home/login";	    		
 		}
 	}
-		
+	/*	
 	//send new Password
 	@RequestMapping(value = "sendPassword", method = RequestMethod.GET)
 	public String sendPassword(@RequestParam("email") String email, Model model, HttpServletRequest request) {
@@ -243,7 +266,7 @@ public class HomeController extends BaseController {
 			return "redirect:/forgetPassword.html?state=sendNewPassword";
 		}
 	}
-		
+	*/
 	//Show forget password page
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.GET)
 	public String forgetPassword(@Valid Member member, BindingResult result, Model model, HttpServletRequest request)  {	
@@ -302,24 +325,53 @@ public class HomeController extends BaseController {
     private AuthenticationManager authenticationManager;
 	//auto login
 	@RequestMapping(value = "autoLogin", method = RequestMethod.GET)
-	public @ResponseBody String autoLogin(@RequestParam("email") String email) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+	public String autoLogin(@RequestParam("email") String email, @RequestParam("key") String time, HttpServletRequest request) {    
+        // http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMjAw
+		// http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMTAw		
 		
-        String defaultTargetUrl = "/"; // 默认登陆成功的页面
-        String redirectUrl = "/account/accountSetting"; // 默认为登陆错误页面
-        
-        
-        Member member = memberService.getMemberByEmail(email);
-		Authentication auth = new UsernamePasswordAuthenticationToken(email, member.getPassword());
-		auth = authenticationManager.authenticate(auth);
-		SecurityContextHolder.getContext().setAuthentication(auth);
+		/*
+		//編碼
+		final Base64.Encoder encoder = Base64.getEncoder();
+		final String encodedText = encoder.encodeToString(textByte);
+		System.out.println(encodedText);
+		*/
+		//解碼
+		final Base64.Decoder decoder = Base64.getDecoder();
+		time=new String(decoder.decode(time));
 		
-		System.out.println("SecurityContextHolder:\n"+SecurityContextHolder.getContext().getAuthentication().getName());
+		DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
+		Calendar endtime = Calendar.getInstance(); // creates calendar
+		try {
+			Date date = formatter.parse(time);
+			endtime.setTime(date); // sets calendar time/date
+			endtime.add(Calendar.HOUR_OF_DAY, 1); 	// adds one hour
+		    System.out.println("endtime:\n"+endtime.getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
-		SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        redirectUrl = (savedRequest != null) ? savedRequest.getRedirectUrl() : defaultTargetUrl;
-        return redirectUrl;
+		Calendar now = Calendar.getInstance();
+		if(endtime.getTime().before(now.getTime())) {
+			System.out.println("endtime after nowtime\n");	
+			return "redirect:/login.html";
+		}
+		else{
+			Member member = memberService.getMemberByEmail(email);
+			
+	        String password = String.format("%04d", NumberUtil.random(100, 9999));
+			member.setEmail(email);
+			member.setPassword(password);    		
+			PasswordEncoder encoder = new Md5PasswordEncoder();
+			member.setPassword(encoder.encodePassword(member.getPassword(), null));
+			memberService.updatePassword(member);
+	        
+	        Authentication auth = new UsernamePasswordAuthenticationToken(email, password);
+			auth = authenticationManager.authenticate(auth);
+			SecurityContextHolder.getContext().setAuthentication(auth);
+			
+			//System.out.println("SecurityContextHolder:\n"+SecurityContextHolder.getContext().getAuthentication().getName());
+	        return "redirect:/account/accountSetting.html";
+		}
 	}
 	
 	
