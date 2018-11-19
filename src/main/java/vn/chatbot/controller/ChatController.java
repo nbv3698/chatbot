@@ -7,10 +7,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -171,6 +171,8 @@ public class ChatController {
 	@RequestMapping(value = "modify")
 	public @ResponseBody int modify(int id, String question,String orgquestion, String organswer, String answer, Model model,
 			HttpServletRequest request) throws SolrServerException, IOException {
+		System.out.println("id:");
+		System.out.println(id);
 		System.out.println("orgquestion:");
 		System.out.println(orgquestion);
 		System.out.println("question:");
@@ -201,6 +203,13 @@ public class ChatController {
 		customerLog.setAnswer(answer);
 		customerLogService.insertSelective(customerLog);
 		
+		String idSolr = java.util.UUID.randomUUID().toString();
+		LocalDate date = LocalDate.now();
+		// works with ZonedDateTime 
+		ZonedDateTime zdt = ZonedDateTime.now();
+		String update_time = zdt.format(DateTimeFormatter.ISO_INSTANT);
+		//System.out.println("Update time : \n"+update_time);
+		
 			// import to Solr
 		SolrServer server = new HttpSolrServer(urlSolrServer);
 	        SolrInputDocument doc = new SolrInputDocument();
@@ -210,8 +219,8 @@ public class ChatController {
 		        doc.addField("chat_a", answer);
 		        doc.addField("org_q", question);
 		        doc.addField("org_a", answer);
-		        String idSolr = java.util.UUID.randomUUID().toString();
 		        doc.addField("id", idSolr);
+		        doc.addField("update_time", update_time);
 		        server.add(doc);
 		        UpdateResponse updateResponse = server.commit();
 		        System.out.println(updateResponse.getStatus());	
@@ -220,14 +229,17 @@ public class ChatController {
 	        	//原本的答案跟輸入的答案不一樣 或 原本的問題跟輸入的問題不一樣 就 更新solr
 	        	if (!organswer.trim().equalsIgnoreCase(answer.trim()) || !orgquestion.trim().equalsIgnoreCase(question) )
 	        	{
-	        		LocalDate date = LocalDate.now();
-	        		String text = date.format(DateTimeFormatter.ISO_INSTANT);
-	        		LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
-	        		System.out.println("Update time : "+parsedDate);
+
+	        		//String text = date.format(DateTimeFormatter.ISO_INSTANT);
+	        		//LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
+	        		//System.out.println("Update time : "+parsedDate);
 	        		doc.addField("chat_q", question);
 			        doc.addField("chat_a", answer);
 			        doc.addField("org_q", question);
 			        doc.addField("org_a", answer);
+			        //System.out.println("idSolr:\n"+idSolr);
+			        doc.addField("id", idSolr);
+			        doc.addField("update_time", update_time);
 			        server.add(doc);
 			        UpdateResponse updateResponse = server.commit();
 			        System.out.println(updateResponse.getStatus());	
@@ -235,14 +247,16 @@ public class ChatController {
 	        }
 	        else if ((question != null && answer != null && question != orgquestion && answer != organswer))
 	        {
-	        	LocalDate date = LocalDate.now();
-        		String text = date.format(DateTimeFormatter.ISO_INSTANT);
-        		LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
-        		System.out.println("Update time : "+parsedDate);
+	        	//LocalDate date = LocalDate.now();
+        		//String text = date.format(DateTimeFormatter.ISO_INSTANT);
+        		//LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
+        		//System.out.println("Update time : "+parsedDate);
 	        	doc.addField("chat_q", question);
 		        doc.addField("chat_a", answer);
 		        doc.addField("org_q", question);
-		        doc.addField("org_a", answer);		        
+		        doc.addField("org_a", answer);	
+		        doc.addField("id", idSolr);
+		        doc.addField("update_time", update_time);
 		        server.add(doc);
 		        UpdateResponse updateResponse = server.commit();
 		        System.out.println(updateResponse.getStatus());	
