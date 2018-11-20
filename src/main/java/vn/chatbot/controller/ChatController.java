@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -220,11 +218,7 @@ public class ChatController {
 	        	//原本的答案跟輸入的答案不一樣 或 原本的問題跟輸入的問題不一樣 就 更新solr
 	        	if (!organswer.trim().equalsIgnoreCase(answer.trim()) || !orgquestion.trim().equalsIgnoreCase(question) )
 	        	{
-	        		LocalDate date = LocalDate.now();
-	        		String text = date.format(DateTimeFormatter.ISO_INSTANT);
-	        		LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
-	        		System.out.println("Update time : "+parsedDate);
-	        		doc.addField("chat_q", question);
+		        	doc.addField("chat_q", question);
 			        doc.addField("chat_a", answer);
 			        doc.addField("org_q", question);
 			        doc.addField("org_a", answer);
@@ -235,10 +229,6 @@ public class ChatController {
 	        }
 	        else if ((question != null && answer != null && question != orgquestion && answer != organswer))
 	        {
-	        	LocalDate date = LocalDate.now();
-        		String text = date.format(DateTimeFormatter.ISO_INSTANT);
-        		LocalDate parsedDate = LocalDate.parse(text, DateTimeFormatter.ISO_INSTANT);
-        		System.out.println("Update time : "+parsedDate);
 	        	doc.addField("chat_q", question);
 		        doc.addField("chat_a", answer);
 		        doc.addField("org_q", question);
