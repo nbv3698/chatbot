@@ -53,7 +53,9 @@ public class HomeController extends BaseController {
 	private MemberServiceLocal memberService;
 	@Autowired
 	private GoogleAuthServiceLocal googleAuthService;
-
+	@Resource(name = "authenticationManager")
+    private AuthenticationManager authenticationManager;
+	
 	@RequestMapping(value = "index")
 	public String index(Model model, HttpServletRequest request) {
 
@@ -221,8 +223,8 @@ public class HomeController extends BaseController {
 				final Base64.Encoder encoder = Base64.getEncoder();
 				final String encodedText = encoder.encodeToString(textByte);
 
-				String url = "http://localhost:8080/autoLogin?email=" + email +"&key=" + encodedText;
-				//String url = "http://122.146.88.206:8080/autoLogin?email=" + email +"&key=" + encodedText;
+				//String url = "http://localhost:8080/autoLogin?email=" + email +"&key=" + encodedText;
+				String url = "http://122.146.88.206:8080/autoLogin?email=" + email +"&key=" + encodedText;
 				EmailUtil.send(email,
 						null,
 						"[Chatbot]Reset password",
@@ -288,7 +290,7 @@ public class HomeController extends BaseController {
 							
 		String json = new Gson().toJson(member);
 			
-		System.out.println("Account:\n" + json);
+		//System.out.println("Account:\n" + json);
 		return json;
 	}
 		
@@ -321,14 +323,12 @@ public class HomeController extends BaseController {
 		memberService.updateByPrimaryKeySelective(member);
 		return "Your user name has been changed successfully!";
 	}
-	@Resource(name = "authenticationManager")
-    private AuthenticationManager authenticationManager;
+	
 	//auto login
+    // http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMjAw
+	// http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMTAw	
 	@RequestMapping(value = "autoLogin", method = RequestMethod.GET)
 	public String autoLogin(@RequestParam("email") String email, @RequestParam("key") String time, HttpServletRequest request) {    
-        // http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMjAw
-		// http://localhost:8080/autoLogin?email=admin@mail.com&key=MjAxODExMTYyMTAw		
-		
 		/*
 		//編碼
 		final Base64.Encoder encoder = Base64.getEncoder();
@@ -345,14 +345,14 @@ public class HomeController extends BaseController {
 			Date date = formatter.parse(time);
 			endtime.setTime(date); // sets calendar time/date
 			endtime.add(Calendar.HOUR_OF_DAY, 1); 	// adds one hour
-		    System.out.println("endtime:\n"+endtime.getTime());
+		    //System.out.println("endtime:\n"+endtime.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		
 		Calendar now = Calendar.getInstance();
 		if(endtime.getTime().before(now.getTime())) {
-			System.out.println("endtime after nowtime\n");	
+			//System.out.println("endtime after nowtime\n");	
 			return "redirect:/login.html";
 		}
 		else{
