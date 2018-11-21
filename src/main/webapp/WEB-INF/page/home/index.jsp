@@ -276,7 +276,7 @@ $(document).ready(function() {
 		scrollToBottom();
 		var idTest = $('#modify-id').val();
 		if(idTest.length==0){
-			$('#modify-id').val(0)
+			$('#modify-id').val(0);
 		}
 		
 		//移除ID 避免DB中的countdel+1
@@ -285,7 +285,13 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: "/chat/modify.html",
-			data: {id: $('#modify-id').val(), question: userQuestion, orgquestion: $("#modify-org-question").val(),organswer: $("#modify-org-answer").val(), answer: $("#modify-answer").val()},
+			data: {
+                id: $('#modify-id').val(), 
+                question: userQuestion, 
+                orgquestion: $("#modify-org-question").val(),
+                organswer: $("#modify-org-answer").val(), 
+                answer: $("#modify-answer").val()
+            },
 			method: "post",
 			beforeSend: function(xhr) {
 				_this.attr("disabled", "disabled");
