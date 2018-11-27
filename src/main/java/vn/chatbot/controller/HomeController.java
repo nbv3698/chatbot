@@ -232,7 +232,7 @@ public class HomeController extends BaseController {
 						"<div>Please click the link to set your password in one hour:<br>" + 
 						"<a href='"+url+"'>Click here</a><br>" +
 						//"We will send new password to this E-mail.<br>" +
-						"If you did not reset your password. Please ingnore this mail.</div>",
+						"If you did not reset your password. Please don't click the link and ingnore this mail.</div>",
 						null);
 			}
 			

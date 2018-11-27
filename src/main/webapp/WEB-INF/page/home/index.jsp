@@ -73,7 +73,9 @@
 				
 				<li class="right hidden">
 					<div class="image">
-						<img src="/resources/image/icon.svg" alt="">
+                        
+						<img src="/resources/image/icon/chatbot.svg" alt="">
+                        
 					</div>
 					<div class="message">
 						<span class="caret"></span>
@@ -123,26 +125,28 @@ function initailAnswerArray(result){
 		//console.log(result[i].answer);
 		answerIDArray.push(result[i].id.toString());
 	}
-	console.log("initail answerIDArray:");
-	for(i=0;i<answerIDArray.length;i++){		
+	//console.log("initail answerIDArray:");
+	/*
+    for(i=0;i<answerIDArray.length;i++){		
 		console.log("answerIDArray["+i+"] = "+answerIDArray[i]+" type:"+typeof(answerIDArray[i]));
 	}
+    */
 }
 
 //刪除特定answerID
 function removeAnswerID(answerID){
 	//answerID = parseInt(answerID);
 	//console.log(typeof(answerID));
-	console.log("answerID:"+answerID+" type:"+typeof(answerID));
-	console.log("Before remove:");
-	console.log(answerIDArray);
+	//console.log("answerID:"+answerID+" type:"+typeof(answerID));
+	//console.log("Before remove:");
+	//console.log(answerIDArray);
 	var index = answerIDArray.indexOf(answerID)
-	console.log("index:"+index);
+	//console.log("index:"+index);
 	if (index > -1) {
 		answerIDArray.splice(index, 1);
 	}
-	console.log("After remove:");
-	console.log(answerIDArray);
+	//console.log("After remove:");
+	//console.log(answerIDArray);
 }
 
 //None of the above
@@ -194,15 +198,27 @@ $(document).ready(function() {
 		
 		e.preventDefault();
 		
-		var _this = $(this);
-		
-		if ($('#question').val() == '') {
+		var _this = $(this);		
+       
+        if ($('#question').val() == '') {
 			alert("Enter content, please!");
 			return;
 		}
-		//清空左邊答案欄
+        else if ($('#question').val().length>1000){
+            alert("The length of input question should be less than 1000.");
+			return;
+        } 
+        
+        //刪除換行 更換成空格	
+        userQuestion = $('#question').val().replace(/\r\n|\n/g," ");
+        //刪除句首＆尾空格
+        userQuestion = userQuestion.replace(/(^\s*)|(\s*$)/g, "");
+        //多個空格轉換成1個空格
+        userQuestion = userQuestion.replace(/\s+/g, ' ');
+        console.log("userQuestion: "+userQuestion);
+
+        //清空左邊答案欄
 		$("#answers").html("Processing...");
-		userQuestion = $('#question').val();
 		$('#question').val("");
 		//更新右邊的對話紀錄
 		var html='';
@@ -259,11 +275,25 @@ $(document).ready(function() {
 			alert("Enter content, please!");
 			return;
 		}
+        else if ($('#modify-answer').val().length>1000){
+            alert("The length of input answer should be less than 1000.");
+			return;
+        } 
+        var userAnswer;
+        
+        //去除換行 更換成空格
+        userAnswer = $('#modify-answer').val().replace(/\r\n|\n/g," ");
+        //刪除句首＆尾空格
+        userAnswer = userAnswer.replace(/(^\s*)|(\s*$)/g, "");
+        //多個空格轉換成1個空格
+        userAnswer = userAnswer.replace(/\s+/g, ' ');       
+        console.log("userAnswer: "+userAnswer);
+        
 		//更新右邊的對話紀錄
 		var html='';
 		html += '<li class="right">';
 		html += '	<div class="image">';
-		html += '		<img src="/resources/image/icon.svg" alt="">';
+		html += '		<img src="/resources/image/icon/chatbot.svg" alt="">';
 		html += '	</div>';
 		html += '	<div class="message">';
 		html += '		<span class="caret"></span>';
@@ -290,7 +320,7 @@ $(document).ready(function() {
                 question: userQuestion, 
                 orgquestion: $("#modify-org-question").val(),
                 organswer: $("#modify-org-answer").val(), 
-                answer: $("#modify-answer").val()
+                answer: userAnswer
             },
 			method: "post",
 			beforeSend: function(xhr) {
