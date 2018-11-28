@@ -2,6 +2,8 @@ package vn.chatbot.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,7 @@ import javax.validation.Valid;
 import org.apache.http.client.ClientProtocolException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -198,9 +201,18 @@ public class HomeController extends BaseController {
 	
 	//Send confirm reset password mail
 	@RequestMapping(value = "sendConfirmResetPasswordMail", method = RequestMethod.POST)
-	public @ResponseBody String confirmResetPassword(@RequestParam("email") String email) {
+	public @ResponseBody String confirmResetPassword(@RequestParam("email") String email, HttpServletRequest request) {
 		Member member = memberService.getMemberByEmail(email);
-
+		String serverIP = "";
+		String serverPort = "8080";
+		
+		try {
+			serverIP = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		if(member==null){
 			System.out.println("E-mail not existing.");
 			return "E-mail not existing.";
@@ -222,9 +234,9 @@ public class HomeController extends BaseController {
 				// encode time string
 				final Base64.Encoder encoder = Base64.getEncoder();
 				final String encodedText = encoder.encodeToString(textByte);
-
+				
 				//String url = "http://localhost:8080/autoLogin?email=" + email +"&key=" + encodedText;
-				String url = "http://122.146.88.206:8080/autoLogin?email=" + email +"&key=" + encodedText;
+				String url = "http://"+serverIP+":"+serverPort+"/autoLogin?email=" + email +"&key=" + encodedText;
 				EmailUtil.send(email,
 						null,
 						"[Chatbot]Reset password",
