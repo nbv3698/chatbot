@@ -168,7 +168,11 @@
 	function displayUserName(){
 		for(var i = 0 ; i < memberAmount; i++){ 
 			reconvertName = reconvert(memberNameArray[i]);
-			$("#tableDiv td:contains('" + memberNameArray[i] + "')").html(reconvertName);
+			//$("#tableDiv td:contains('" + memberNameArray[i] + "')").html(reconvertName);
+            
+            $("td").filter(function() { 
+                return $(this).text() == memberNameArray[i];
+            }).text(reconvertName);
 			//console.log(memberNameArray[i]);
 			//console.log(reconvertName);
 		}

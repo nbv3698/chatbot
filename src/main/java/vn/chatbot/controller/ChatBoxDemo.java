@@ -17,7 +17,7 @@ public class ChatBoxDemo {
 	
 	public static ArrayList<Conver> query(String q)
 	{
-		String url = "http://localhost:8983/solr/qnap_ir_test3";
+		String url = "http://localhost:8983/solr/qnap_ir_chat_log";
 		HttpSolrServer server = new HttpSolrServer(url);
 		server.setMaxRetries(1); // defaults to 0. > 1 not recommended.
 		server.setConnectionTimeout(5000); // 5 seconds to establish TCP

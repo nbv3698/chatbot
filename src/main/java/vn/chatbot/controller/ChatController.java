@@ -52,7 +52,7 @@ public class ChatController {
 	private QaSolrServiceLocal qaSolrService;
 	
 	private List<Message> messages = new ArrayList<Message>();
-	private String urlSolrServer = "http://localhost:8983/solr/qnap_ir_test3";
+	private String urlSolrServer = "http://localhost:8983/solr/qnap_ir_chat_log";
 	/**
 	 * submit a question
 	 * 
