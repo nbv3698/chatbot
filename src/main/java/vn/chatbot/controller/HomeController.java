@@ -385,7 +385,26 @@ public class HomeController extends BaseController {
 	        return "redirect:/account/accountSetting.html";
 		}
 	}
+	//Not complete
+	@RequestMapping(value = "rememberMe", method = RequestMethod.POST)
+	public String rememberMe(@RequestParam("email") String email, @RequestParam("password") String password, Model model, HttpServletRequest request) {    
+		Member member = memberService.getMemberByEmail(email);
+		
+		if (member == null) {
+			return "redirect:/login.html";
+		}
+		else {
+			member.setEmail(email);
+			member.setPassword(password);
+			
+			Authentication auth = new UsernamePasswordAuthenticationToken(email, password);
+			auth = authenticationManager.authenticate(auth);
+			SecurityContextHolder.getContext().setAuthentication(auth);
+			model.addAttribute("member", member);
+			
+			return "redirect:/index.html";
+		}
 	
-	
+	}
 	
 }

@@ -50,7 +50,8 @@
     }
     */
 	$(document).ready(function() {
-        getSMTPSetting();	
+        getSMTPSetting();
+		//autoLogin();
     });
     
     function getSMTPSetting(){
@@ -75,6 +76,48 @@
             }
         })
     }
+		
+	//Not complete
+	function rememberMe(){			
+		if ($('#remember').is(':checked')) {
+			// save username and password
+			localStorage.userName = $('#j_username').val();
+			localStorage.password = $('#j_password').val();
+			localStorage.checkBoxValidation = $('#remember').val();
+		} 
+		else {
+			localStorage.userName = '';
+			localStorage.password = '';
+			localStorage.checkBoxValidation = '';
+		}
+
+			//Other form functions
+		
+	}
+	
+	//Not complete
+	function autoLogin(){
+		if(localStorage.checkBoxValidation=='on'){
+			$.ajax({
+				url: "rememberMe.html",
+				data: {
+					email: localStorage.userName, 
+					password:  localStorage.password
+				},
+				method: "post",
+				
+				success: function(result) {
+					console.log('success');				
+				},
+				error: function(e) {
+					//alert("Error in processing");
+					console.log(e);
+				}
+			});
+		}
+		
+		
+	}
 </script>
 <style>
 .gplus {
@@ -201,10 +244,12 @@ hr {
 				</div>
 			</div>
 			<div class="submit form-group">
-				<div class="remember">
+			<!--
+			<div class="remember">
 					<input type="checkbox" name="_spring_security_remember_me" class='icheck-me' data-skin="square" data-color="blue" id="remember">
 					<label for="remember">Remember me</label>
 				</div>
+			-->				
 				<input type="submit" value="Sign me in" class='btn btn-primary'>
 			</div>
 			
